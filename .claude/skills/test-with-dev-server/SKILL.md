@@ -1,6 +1,6 @@
 ---
 name: test-with-dev-server
-description: Use when running or testing the SlipStream iOS app against a local SlipStream dev server — real login/requests/downloads/inbox against dev-mode seeded data on simulator, Mac, or a physical device; or when the user mentions localhost:8080, a `.local` dev server, server "dev mode", or the SLIPSTREAM_BASE_URL / SLIPSTREAM_DEV_* env vars.
+description: Use when you want to test SlipStream iOS app behavior against a production-like backend without affecting anything in the "real world" - all external interactions (searches, downloads) are mocked, but the behavior appears real. Always use this when running simulator tests.
 ---
 
 # Test with the local dev server
