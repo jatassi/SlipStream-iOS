@@ -15,3 +15,6 @@ xcuserdata/
 
 # SDD scratch (subagent-driven-development progress ledger)
 .superpowers/
+
+# XcodeBuildMCP local session config (may hold dev creds) — never commit
+.xcodebuildmcp/
