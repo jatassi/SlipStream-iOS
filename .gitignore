@@ -1,0 +1,17 @@
+# Xcode
+build/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+*.xcscmblueprint
+*.xccheckout
+
+# SPM
+.build/
+.swiftpm/
+
+# macOS
+.DS_Store
+
+# SDD scratch (subagent-driven-development progress ledger)
+.superpowers/
