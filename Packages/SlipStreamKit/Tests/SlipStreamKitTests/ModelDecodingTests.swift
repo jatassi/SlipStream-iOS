@@ -47,4 +47,23 @@ import Testing
     #expect(obj?["username"] == "jack")
     #expect(obj?["password"] == "1234")
   }
+
+  @Test func portalUserDefaultsModuleSettingsWhenAbsent() throws {
+    let json = """
+      {"id":4,"username":"Jackson","autoApprove":true,"isAdmin":false,"enabled":true,
+       "createdAt":"2026-01-20T04:04:56Z","updatedAt":"2026-01-20T17:00:53Z"}
+      """
+    let user = try JSONDecoder().decode(PortalUser.self, from: Data(json.utf8))
+    #expect(user.moduleSettings == [])
+    #expect(user.username == "Jackson")
+  }
+
+  @Test func portalUserDecodesModuleSettingsWhenPresent() throws {
+    let json = """
+      {"id":1,"username":"jack","moduleSettings":[{"moduleType":"movie","qualityProfileId":2}],
+       "autoApprove":true,"isAdmin":false,"enabled":true,"createdAt":"t","updatedAt":"t"}
+      """
+    let user = try JSONDecoder().decode(PortalUser.self, from: Data(json.utf8))
+    #expect(user.moduleSettings == [UserModuleSetting(moduleType: "movie", qualityProfileId: 2)])
+  }
 }

@@ -41,4 +41,21 @@ public struct PortalUser: Codable, Equatable, Sendable, Identifiable {
     self.createdAt = createdAt
     self.updatedAt = updatedAt
   }
+
+  private enum CodingKeys: String, CodingKey {
+    case id, username, moduleSettings, autoApprove, enabled, isAdmin, createdAt, updatedAt
+  }
+
+  public init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    id = try container.decode(Int.self, forKey: .id)
+    username = try container.decode(String.self, forKey: .username)
+    moduleSettings =
+      try container.decodeIfPresent([UserModuleSetting].self, forKey: .moduleSettings) ?? []
+    autoApprove = try container.decode(Bool.self, forKey: .autoApprove)
+    enabled = try container.decode(Bool.self, forKey: .enabled)
+    isAdmin = try container.decode(Bool.self, forKey: .isAdmin)
+    createdAt = try container.decode(String.self, forKey: .createdAt)
+    updatedAt = try container.decode(String.self, forKey: .updatedAt)
+  }
 }
