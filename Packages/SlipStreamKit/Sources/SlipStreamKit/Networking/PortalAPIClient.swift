@@ -15,15 +15,17 @@ public final class PortalAPIClient: Sendable {
         let error: String?
     }
 
-    /// `path` is relative to the portal base, no leading slash, e.g. "auth/login".
+    /// `path` is relative to `basePath`, no leading slash, e.g. "auth/login".
+    /// `basePath` defaults to the portal base; `/status` lives one level up at "api/v1".
     func send<T: Decodable>(
         path: String,
         method: String,
         token: String?,
-        body: Data?
+        body: Data?,
+        basePath: String = "api/v1/requests"
     ) async throws -> T {
         let url = baseURL
-            .appendingPathComponent("api/v1/requests")
+            .appendingPathComponent(basePath)
             .appendingPathComponent(path)
         var request = URLRequest(url: url)
         request.httpMethod = method
@@ -69,5 +71,11 @@ extension PortalAPIClient: AuthAPI {
 
     public func profile(token: String) async throws -> PortalUser {
         try await send(path: "auth/profile", method: "GET", token: token, body: nil)
+    }
+}
+
+extension PortalAPIClient: SystemAPI {
+    public func status() async throws -> SystemStatus {
+        try await send(path: "status", method: "GET", token: nil, body: nil, basePath: "api/v1")
     }
 }

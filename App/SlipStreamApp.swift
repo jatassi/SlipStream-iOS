@@ -8,11 +8,16 @@ struct SlipStreamApp: App {
         tokenStore: KeychainTokenStore(),
         serverConfig: UserDefaultsServerConfigStore()
     )
+    @State private var system = SystemStore(
+        makeSystemAPI: { url in PortalAPIClient(baseURL: url) },
+        serverConfig: UserDefaultsServerConfigStore()
+    )
 
     var body: some Scene {
         WindowGroup {
             RootView()
                 .environment(auth)
+                .environment(system)
         }
     }
 }

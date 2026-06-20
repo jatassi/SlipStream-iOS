@@ -53,4 +53,18 @@ import Foundation
             _ = try await client().login(LoginRequest(username: "jack", password: "0000"))
         }
     }
+
+    @Test func statusHitsPublicPathWithoutToken() async throws {
+        StubURLProtocol.handler = { request in
+            #expect(request.url?.path == "/api/v1/status")
+            #expect(request.httpMethod == "GET")
+            #expect(request.value(forHTTPHeaderField: "Authorization") == nil)
+            let body = #"{"portalEnabled":true,"enabledModules":{"movie":true,"tv":true}}"#
+            let resp = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
+            return (resp, Data(body.utf8))
+        }
+        let status = try await client().status()
+        #expect(status.portalEnabled == true)
+        #expect(status.enabledModuleTypes == [.movie, .tv])
+    }
 }

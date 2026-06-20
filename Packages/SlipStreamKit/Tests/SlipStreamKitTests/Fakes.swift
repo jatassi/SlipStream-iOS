@@ -25,10 +25,23 @@ struct FakeAuthAPI: AuthAPI {
     func profile(token: String) async throws -> PortalUser { try await onProfile(token) }
 }
 
-func sampleUser(username: String = "jack") -> PortalUser {
+func sampleUser(username: String = "jack", moduleTypes: [String] = []) -> PortalUser {
     PortalUser(
-        id: 1, username: username, moduleSettings: [],
+        id: 1, username: username,
+        moduleSettings: moduleTypes.map { UserModuleSetting(moduleType: $0, qualityProfileId: nil) },
         autoApprove: true, enabled: true, isAdmin: false,
         createdAt: "t", updatedAt: "t"
     )
+}
+
+struct FakeSystemAPI: SystemAPI {
+    var onStatus: @Sendable () async throws -> SystemStatus
+    func status() async throws -> SystemStatus { try await onStatus() }
+}
+
+func sampleStatus(
+    portalEnabled: Bool = true,
+    enabledModules: [String: Bool]? = ["movie": true, "tv": true]
+) -> SystemStatus {
+    SystemStatus(portalEnabled: portalEnabled, enabledModules: enabledModules)
 }
