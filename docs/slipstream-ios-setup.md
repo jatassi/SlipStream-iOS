@@ -1,6 +1,6 @@
 # SlipStream iOS — Project Setup
 
-**v1 scope:** Portal companion. Browse the library and request media against SlipStream's JWT portal surface, authenticating with username + a 4-digit PIN. The **native app targets you and a few trusted family members**; the broader, less-trusted audience stays on SlipStream's existing responsive **web portal**. **One server-side change is in scope** — per-user `/ws` scoping (§5, and the companion plan in the server repo) — so the old "no server changes" assumption no longer holds; everything else is client-only. No paid Apple entitlements.
+**v1 scope:** Portal companion. Browse the library and request media against SlipStream's JWT portal surface, authenticating with username + a 4-digit PIN. The **native app targets you and a few trusted family members**; the broader, less-trusted audience stays on SlipStream's existing responsive **web portal**. **No server changes required** — the app reads the existing portal REST surface and polls for status updates, exactly as today's web frontend does for non-admin users. No paid Apple entitlements.
 **Minimum target:** iOS / iPadOS **26**, Swift 6, SwiftUI.
 **Platforms:** iPhone, iPad, and Mac via **"Designed for iPad"** — one app target, no separate Mac codebase. (tvOS/watchOS deliberately out of scope.)
 **Workflow goal:** Claude Code drives the inner loop (write → build → run on simulator → read errors → iterate) headlessly; Xcode is reserved for signing, provisioning, and archive.
@@ -18,7 +18,7 @@
 | Layout | Size-class-adaptive SwiftUI (`NavigationSplitView`, grids) | iPad adaptivity *is* the Mac experience under Designed for iPad — invest once, get both. |
 | Networking | `URLSession` + async/await behind a typed client | No server OpenAPI spec exists (confirmed), so hand-mirror the portal types from `web/src/types/portal.ts`. |
 | Auth | Username + 4-digit PIN → 30-day JWT; token in biometric-gated Keychain, Face ID local unlock | No paid entitlement needed. PIN authenticates to the server; Face ID is a local gate on token release. |
-| Real-time | `URLSessionWebSocketTask` → `@Observable` event manager | Re-emits `/ws` events as invalidate-then-refetch, analogous to TanStack Query. Auth rides the `Sec-WebSocket-Protocol` header; depends on per-user server scoping (§5). |
+| Real-time | ~3s polling of the active views (`@Observable` refresh loop) | The portal `/ws` is admin-only today, so the app polls the REST endpoints while foregrounded — the same approach the web frontend uses for non-admin live status. WebSocket is a future option only if the server adds portal push (§5). |
 | Images | Nuke | High poster/artwork throughput; `AsyncImage` is fine for a throwaway spike. |
 | Persistence | In-memory + `URLCache` for v1 | Add SwiftData only if an offline library snapshot becomes a requirement. |
 | Testing | Swift Testing (unit), XCUITest (UI) | UI tests run through XcodeBuildMCP. |
@@ -40,7 +40,7 @@
 - macOS with **Xcode 26.3+** installed (`xcode-select -p` should resolve; run the IDE once to accept the license and install simulators).
 - **Node.js** on PATH (XcodeBuildMCP runs via `npx`).
 - **Claude Code** installed and authenticated.
-- A reachable **SlipStream instance** with the portal enabled, served over **HTTPS with a publicly-trusted cert**. The server itself is plain HTTP on `:8080`; your existing reverse proxy terminates TLS. iOS App Transport Security blocks plain `http://`, so the proxied `https://` origin is what the app talks to — no ATS exceptions needed. (Also confirm the proxy forwards the WebSocket `Upgrade` **and** `Sec-WebSocket-Protocol` header; the latter carries the JWT for `/ws`.)
+- A reachable **SlipStream instance** with the portal enabled, served over **HTTPS with a publicly-trusted cert**. The server itself is plain HTTP on `:8080`; your existing reverse proxy terminates TLS. iOS App Transport Security blocks plain `http://`, so the proxied `https://` origin is what the app talks to — no ATS exceptions needed.
 - A portal user account for testing.
 - A unique **bundle identifier**. A **free Apple Personal Team** is sufficient — Face ID needs no special entitlement, and biometric-gated Keychain works on a free team. **Free-team limits to plan for:** provisioning profiles expire every **7 days** (the app stops launching → rebuild/reinstall from your Mac weekly), max **3 apps installed concurrently**, and **no TestFlight or App Store** (those need the paid $99/yr Apple Developer Program). This is why the native app is scoped to you + a couple of devices you can re-sign; everyone else uses the web portal.
 - An **Apple Silicon Mac** to run the Designed-for-iPad build — that path is ARM-only and won't run on Intel Macs.
@@ -184,9 +184,8 @@ Targets the portal surface only (username + 4-digit PIN → 30-day JWT). iOS 26+
   clients in web/src/api/portal/. No OpenAPI spec exists.
 - Auth: POST /api/v1/requests/auth/login {username, password} -> {token, user, isAdmin}.
   The "password" field IS the 4-digit PIN. JWT lasts 30 days; there is no refresh token.
-- WebSocket: /ws, JWT passed via the Sec-WebSocket-Protocol header. Messages are
-  {type, payload, timestamp, module, entityType, entityId, action}; mirror the per-module
-  wsInvalidationRules from web/src/modules/*/index.ts. (Server-side per-user scoping pending.)
+- Real-time: poll the active views (requests, downloads, inbox count) every ~3s while
+  foregrounded, mirroring the web frontend. The portal /ws is admin-only; do not use it.
 
 ## Conventions
 - Feature code lives in Packages/*; keep the .xcodeproj edits minimal.
@@ -196,7 +195,7 @@ Targets the portal surface only (username + 4-digit PIN → 30-day JWT). iOS 26+
   server web/src/types/portal.ts. Do not invent endpoints or fields.
 - Networking via URLSession + async/await behind SlipStreamKit's typed client.
 - JWT lives in Keychain only — never UserDefaults.
-- WebSocket events from /ws drive invalidate-then-refetch; do not poll.
+- Refresh active list views by polling every ~3s while foregrounded; pause in background.
 
 ## Definition of done for a feature
 Builds clean on the iPhone and iPad simulators and the Mac (Designed for iPad)
@@ -223,12 +222,12 @@ The app talks to **`/api/v1`** (REST) and **`/ws`** (WebSocket). Portal endpoint
 
 - **Portal endpoints, auth, quotas:** `internal/portal/` (handlers, provisioner, user/quota logic) and the portal clients in `web/src/api/portal/`.
 - **Models / field shapes:** the canonical typed contract is **`web/src/types/portal.ts`** — 326 lines of hand-written interfaces (`LoginRequest`, `Request`, `PortalMovieSearchResult`, `AvailabilityInfo`, …). Mirror these as Swift `Codable` structs in `SlipStreamKit`. `RequestStatus` is an 8-state enum: `pending | approved | denied | searching | downloading | failed | available | cancelled`.
-- **WebSocket events:** the per-module `ModuleConfig.wsInvalidationRules` in `web/src/modules/<id>/index.ts` (regex patterns like `movie:(added|updated|deleted)` → query keys to invalidate, applied in `web/src/stores/ws-message-handlers.ts`) tell you which events map to which data, so the Swift event manager can mirror the same invalidate→refetch routing. Messages have the shape `{type, payload, timestamp, module, entityType, entityId, action}`, and the JWT is presented to `/ws` via the **`Sec-WebSocket-Protocol`** header.
+- **Real-time updates:** the portal uses **polling**, not WebSocket. The web frontend refetches active views (e.g. download progress) on a ~3s interval for non-admin users, and the iOS app does the same against the same REST endpoints. (The `/ws` socket exists but its upgrade validator is **admin-audience only** — a portal token is rejected at upgrade — so there is nothing for a portal client to subscribe to.)
 - **Enabled modules:** discover which modules (movie/tv) are active from `GET /api/v1/system` rather than hardcoding.
 
 **Model generation:** the Echo backend does **not** emit an OpenAPI spec (no swaggo/oapi-codegen, no annotations, no spec artifact — confirmed). So `swift-openapi-generator` is **not** an option; hand-mirror the portal types from `web/src/types/portal.ts` and treat the server source as canonical. Since the server is actively developed, add a lightweight drift check (e.g. vendor `portal.ts` into the iOS repo and a CI step that diffs it against the server's).
 
-**Server dependency — per-user `/ws` scoping.** Today `/ws` is a single global broadcast: any authenticated connection receives every event (other users' requests, admin `devmode`/scheduler/log traffic). For the trusted native audience that's just noise the client can filter, but because the same socket also serves the less-trusted web users, the scoping should move server-side. This is the one in-scope server change; it is specced separately in the server repo at `docs/portal-websocket-scoping-plan.md`. Wire the iOS event manager to live updates after that lands (until then, the client should defensively filter to its own events).
+**No server dependency.** An earlier draft assumed the app would consume `/ws` and that the socket needed per-user scoping first. That turned out to be moot: portal tokens can't open `/ws` at all today (the upgrade validator is admin-audience only), and 3s polling covers the client's needs, so v1 requires **no server change**. A real-time socket only becomes worthwhile if the server later adds portal-scoped push; that path — and the per-user scoping it would require first — is captured, shelved, in the server repo at `docs/portal-websocket-scoping-plan.md`.
 
 ---
 
@@ -284,7 +283,7 @@ For a personal-distribution app on a free team, your "distribution" is sideloadi
 3. ~~Token lifetime~~ — **Resolved: 30-day JWT, no refresh token.** Store the JWT behind Face ID; the PIN resurfaces only on monthly expiry (Section 6).
 4. **XcodeBuildMCP invocation** — verify against the current README: the server starts with the **`mcp` subcommand**, tool names are `build_sim` / `test_sim` / `start_sim_log_cap` / `stop_sim_log_cap`, and config lives in `.xcodebuildmcp/config.yaml`.
 5. **Simulator name** — set `sessionDefaults.simulatorName` to a runtime actually installed (`xcrun simctl list devices`).
-6. **Per-user `/ws` scoping (server)** — the one in-scope server change; design it via `docs/portal-websocket-scoping-plan.md` in the server repo before wiring the iOS event manager to live updates.
+6. **Real-time via polling** — confirmed: the app polls the REST surface (~3s while foregrounded), like the web frontend; no WebSocket and no server change in v1. (A portal token can't even open `/ws` today — admin-only. WebSocket is shelved: see `docs/portal-websocket-scoping-plan.md` in the server repo.)
 7. **Confirm target devices run iOS 26** — the iOS 26 minimum drops A12 hardware (iPhone XR/XS, 7th-gen iPad); make sure your and your family's devices qualify, and that the Mac is Apple Silicon.
 
 ---
@@ -294,5 +293,5 @@ For a personal-distribution app on a free team, your "distribution" is sideloadi
 These are explicitly **not** in v1, gathered here so the v1 surface stays small:
 
 - **Quota display** — there is no portal-scoped quota endpoint today (quota reads are admin-only, and an over-quota request still returns `201` rather than erroring), so a quota meter isn't buildable against the current API without a small server addition. Cut from v1.
-- **Push notifications** — "your movie is ready" as a real push needs APNs, which is paid-tier-only. v1 relies on live WebSocket updates while foregrounded (plus the in-app `/inbox` history if you choose to surface it).
+- **Push notifications** — "your movie is ready" as a real push needs APNs, which is paid-tier-only. v1 instead surfaces status by polling while the app is foregrounded (plus the in-app `/inbox` history if you choose to surface it).
 - **Passkeys** — see §6; needs Associated Domains (paid tier).
