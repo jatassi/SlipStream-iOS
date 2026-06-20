@@ -1,0 +1,19 @@
+# Relaxed SwiftLint rules for test code (nested config; merges onto the repo-root config).
+# Every rule below fires *because* it's test code, not because of a real defect — keep every
+# other semantic check on.
+disabled_rules:
+  # Tests force-unwrap known-good fixtures, force-try decoding, run long methods/types.
+  - force_unwrapping
+  - force_try
+  - force_cast
+  - function_body_length
+  - type_body_length
+  # Test doubles mirror production signatures even when the stub body doesn't throw/await,
+  # and swift-testing's `@Test … async throws` nests its `try`s inside closures. The async /
+  # static cases below are unfixable false positives (async protocol witnesses can't drop
+  # `async`; URLProtocol overrides can't be `static`).
+  - unneeded_throws_rethrows
+  - async_without_await
+  - static_over_final_class
+  # Performance rule — meaningless on `== []` test assertions.
+  - empty_collection_literal

@@ -6,16 +6,16 @@
 /// endpoint. `metadata` and `status` live on `/api/v1`, outside the `/api/v1/requests`
 /// portal base.
 public enum APIBase: Sendable {
-    case portal
-    case metadata
-    case status
+  case portal
+  case metadata
+  case status
 
-    /// Path prefix appended to the base URL before the call's own path.
-    var pathPrefix: String {
-        switch self {
-        case .portal: "api/v1/requests"
-        case .metadata: "api/v1/metadata"
-        case .status: "api/v1"
-        }
+  /// Path prefix appended to the base URL before the call's own path.
+  var pathPrefix: String {
+    switch self {
+    case .portal: "api/v1/requests"
+    case .metadata: "api/v1/metadata"
+    case .status: "api/v1"
     }
+  }
 }

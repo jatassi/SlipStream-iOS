@@ -1,0 +1,39 @@
+#!/bin/sh
+# SlipStream iOS pre-commit hook (see CLAUDE.md → Linting).
+# Install with: make install-hooks
+#
+# Checks ONLY staged .swift files and BLOCKS the commit on failure — it never rewrites your
+# code. On failure: run `make format` (formatting) and fix any SwiftLint findings, then
+# re-stage and commit again.
+#
+# Note: it inspects the working-tree copy of staged files; with a partially-staged file
+# (git add -p) it sees unstaged hunks too. Fine for normal whole-file commits.
+set -eu
+
+staged=$(git diff --cached --name-only --diff-filter=ACM -- '*.swift')
+[ -z "$staged" ] && exit 0
+
+# Preflight: fail with an actionable message (not a misleading "violations" / "not formatted"
+# error) when the tools are missing from this environment's PATH/toolchain.
+xcrun --find swift-format >/dev/null 2>&1 || {
+    echo "✗ swift-format not found in the Swift toolchain (need Xcode command line tools)." >&2
+    exit 1
+}
+command -v swiftlint >/dev/null 2>&1 || {
+    echo "✗ swiftlint not found. Install it:  brew install swiftlint" >&2
+    exit 1
+}
+
+# Formatting (swift-format owns this).
+if ! printf '%s\n' "$staged" | xargs xcrun swift-format lint --strict --configuration .swift-format; then
+    echo "" >&2
+    echo "✗ swift-format: staged files are not formatted. Fix with:  make format" >&2
+    exit 1
+fi
+
+# Semantic lint (SwiftLint, --strict so warnings block too).
+if ! printf '%s\n' "$staged" | xargs swiftlint lint --strict --quiet --force-exclude; then
+    echo "" >&2
+    echo "✗ SwiftLint found violations (above). Fix them, then re-stage." >&2
+    exit 1
+fi

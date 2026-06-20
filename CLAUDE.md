@@ -11,6 +11,12 @@ Targets the portal surface only. iOS 26+, Swift 6.
 - Logs:         mcp__xcodebuildmcp__start_sim_log_cap / stop_sim_log_cap
 - Scheme: SlipStream   Simulators: iPhone 17, iPad Pro 13-inch (M4)
 
+## Linting
+- swift-format owns formatting; SwiftLint owns semantic lint only (configs: `.swift-format`, `.swiftlint.yml`).
+- `make format` (apply) · `make lint` (check) · `make install-hooks` (per checkout).
+- Pre-commit hook checks staged files and blocks; it never rewrites code.
+- SwiftLint via Homebrew; swift-format from the toolchain. Tests use a relaxed nested config.
+
 ## API contract (read from `~/Git/SlipStream`; do not invent)
 - Base URL: `https://slipstream.atassi.org/` Portal endpoints live under /api/v1/requests/*.
 - Types source of truth: web/src/types/portal.ts - clients in web/src/api/portal/.
@@ -32,3 +38,4 @@ Targets the portal surface only. iOS 26+, Swift 6.
 - This is a solo repo, you have free reign to commit and push directly to `main`
 - Run the `/code-review` skill before merging non-`docs/` changes to `main` and triage findings with bias towards acceptance.
 - Always squash merge to `main`
+- Never inline-disable a linter rule (e.g. `// swiftlint:disable`) without extremely strong justification — fix the code or adjust the shared config instead.
