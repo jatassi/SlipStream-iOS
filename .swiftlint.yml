@@ -7,8 +7,11 @@
 # The codebase is held at ZERO violations (the pre-commit hook runs `--strict`); prefer fixing
 # code over adding inline `// swiftlint:disable` — disables need extremely strong justification.
 
-# Build artifacts, generated sources, and dependencies SwiftLint must never read.
+# Build artifacts, generated sources, dependencies, and tooling state SwiftLint must never read.
+# `.claude` is excluded so SwiftLint never recurses into sibling git worktrees under
+# `.claude/worktrees/*` (each holds a full source checkout that would otherwise be linted).
 excluded:
+  - .claude
   - "**/.build"
   - .swiftpm
   - DerivedData
