@@ -9,6 +9,7 @@ struct SlipStreamApp: App {
     serverConfig: UserDefaultsServerConfigStore()
   )
   @State private var poller: PollingEngine
+  @State private var navigation = NavigationModel()
 
   init() {
     let initialAuth = AuthStore(
@@ -30,6 +31,7 @@ struct SlipStreamApp: App {
         .environment(auth)
         .environment(system)
         .environment(poller)
+        .environment(navigation)
     }
   }
 }
