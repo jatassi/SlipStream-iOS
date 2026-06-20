@@ -26,7 +26,7 @@ Each item is an **unrefined Feature** (Epic → Feature). Full stubs live in [`d
 - [ ] **F1.4** [System & module discovery](superpowers/specs/01-foundations/system-module-discovery.md) — enabled modules (movie/tv) + `portalEnabled`
 - [ ] **F1.5** [Real-time polling engine](superpowers/specs/01-foundations/polling-engine.md) — shared interval poller; no websockets · 📋 [plan](superpowers/plans/2026-06-20-realtime-polling-engine.md)
 - [ ] ◑ **F1.6** [App shell & navigation](superpowers/specs/01-foundations/app-shell-navigation.md) — Home/Search/Library/Settings chrome, adaptive · ◑ **Plan 1: gate skeleton done** · 📋 [plan](superpowers/plans/2026-06-20-app-shell-navigation.md)
-- [ ] **F1.7** [Design system & image loading](superpowers/specs/01-foundations/design-system-image-loading.md) — Nuke posters, adaptive grid, skeletons
+- [ ] **F1.7** [Design system & image loading](superpowers/specs/01-foundations/design-system-image-loading.md) — Nuke posters, adaptive grid, skeletons · 📋 [plan](superpowers/plans/2026-06-20-design-system-image-loading.md)
 
 ### 02 — Authentication & Session — [epic](superpowers/specs/02-authentication/README.md)
 
