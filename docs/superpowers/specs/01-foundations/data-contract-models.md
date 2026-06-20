@@ -1,14 +1,14 @@
 ---
 epic: 01-foundations
-status: partial
+status: complete
 type: feature
 v1: true
-plan: "Plan 1 (auth subset; grows per feature)"
+plan: "Plan 1 (auth subset) + Plan 2 (2026-06-20-codable-data-contract: remainder + drift guard)"
 ---
 
 # Codable data contract (mirror of portal.ts)
 
-> **Status (2026-06-20):** ◑ **Partial** — Plan 1 (`d268544`) delivered the auth-subset models (`PortalUser`, `UserModuleSetting`, `LoginRequest`/`LoginResponse`). Remaining: `Request`/`RequestStatus`, search/availability, `PortalDownload`, notifications, enriched seasons/episodes, etc.
+> **Status (2026-06-20):** ✅ **Complete** — Plan 1 (`d268544`) delivered the auth-subset models (`PortalUser`, `UserModuleSetting`, `LoginRequest`/`LoginResponse`); Plan 2 (`2026-06-20-codable-data-contract`) mirrored the rest of the in-scope `portal.ts` contract — string-union enums, recursive `JSONValue`, signup/profile/invitation/PIN auth types, `Request`/`CreateRequestInput`/`RequestListFilters`, search & availability (`PortalMovieSearchResult`/`PortalSeriesSearchResult`/`AvailabilityInfo`/`SlotInfo`/`SeasonAvailabilityInfo`/`EnrichedSeason`/`EnrichedEpisode`), `UserNotification`/`CreateUserNotificationInput`, and `PortalDownload` — plus a self-contained contract-drift guard over a vendored `portal.ts` snapshot. Admin/deferred/cut types remain deliberately excluded (enforced by the drift guard).
 
 **Intent:** Define the Swift `Codable` types that mirror the server's hand-written `portal.ts` so every feature decodes the same canonical shapes — there is no OpenAPI spec to generate from.
 

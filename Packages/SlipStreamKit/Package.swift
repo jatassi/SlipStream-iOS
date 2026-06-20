@@ -9,6 +9,10 @@ let package = Package(
   ],
   targets: [
     .target(name: "SlipStreamKit"),
-    .testTarget(name: "SlipStreamKitTests", dependencies: ["SlipStreamKit"]),
+    .testTarget(
+      name: "SlipStreamKitTests",
+      dependencies: ["SlipStreamKit"],
+      resources: [.copy("Contract/portal.ts")]
+    ),
   ]
 )
