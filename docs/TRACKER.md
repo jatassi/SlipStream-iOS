@@ -22,7 +22,7 @@ Each item is an **unrefined Feature** (Epic → Feature). Full stubs live in [`d
 
 - [x] **F1.1** [Server connection onboarding](superpowers/specs/01-foundations/server-connection-onboarding.md) — capture & persist the HTTPS server origin (native-only) · ✅ **done in Plan 1**
 - [ ] ◑ **F1.2** [Portal API client](superpowers/specs/01-foundations/portal-api-client.md) — typed client, base path, Bearer JWT, error model, 401 hook · ◑ **Plan 1: auth subset done**
-- [ ] ◑ **F1.3** [Codable data contract](superpowers/specs/01-foundations/data-contract-models.md) — Swift mirrors of `portal.ts`; admin types excluded · ◑ **Plan 1: auth-subset models done**
+- [ ] ◑ **F1.3** [Codable data contract](superpowers/specs/01-foundations/data-contract-models.md) — Swift mirrors of `portal.ts`; admin types excluded · ◑ **Plan 1: auth-subset models done** · 📋 [plan](superpowers/plans/2026-06-20-codable-data-contract.md)
 - [ ] **F1.4** [System & module discovery](superpowers/specs/01-foundations/system-module-discovery.md) — enabled modules (movie/tv) + `portalEnabled`
 - [ ] **F1.5** [Real-time polling engine](superpowers/specs/01-foundations/polling-engine.md) — shared interval poller; no websockets
 - [ ] ◑ **F1.6** [App shell & navigation](superpowers/specs/01-foundations/app-shell-navigation.md) — Home/Search/Library/Settings chrome, adaptive · ◑ **Plan 1: gate skeleton done**
@@ -90,6 +90,7 @@ Each item is an **unrefined Feature** (Epic → Feature). Full stubs live in [`d
 
 - **Convention: one plan per spec.** When a feature is refined, write a single plan for it under [`docs/superpowers/plans/`](superpowers/plans/) (named for the feature). There is no Plans 2–4 roadmap — each spec is its own plan.
 - **Plan 1 (foundation)** is **✅ complete** — implemented and squash-merged to `main` in `d268544` (2026-06-20); `swift test` green (11/11). [`docs/superpowers/plans/2026-06-19-slipstream-ios-foundation.md`](superpowers/plans/2026-06-19-slipstream-ios-foundation.md). It delivered the features marked **· ✅ done / ◑ Plan 1** above; its internal roadmap section has been trimmed to match the one-plan-per-spec model.
+- **F1.3 (Codable data contract)** — plan written 2026-06-20, not yet implemented: [`docs/superpowers/plans/2026-06-20-codable-data-contract.md`](superpowers/plans/2026-06-20-codable-data-contract.md). Mirrors the remaining `portal.ts` types into `SlipStreamKit` (enums, `JSONValue`, requests, search/availability, notifications/downloads) + a contract-drift guard; 7 TDD tasks, all headless via `swift test`.
 
 ## Scope decisions — resolved 2026-06-19
 
