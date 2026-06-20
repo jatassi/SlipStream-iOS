@@ -1,0 +1,2 @@
+- When spawning subagents, always prefix their labels with the model name in brackets (e.g., `[Opus (1M)] Do the thing`, `[Sonnet] Do the less complicated thing`)
+- This is a solo repo, you have free reign to commit and push directly to `main`
