@@ -64,7 +64,7 @@ SlipStream-iOS/
   SlipStream.xcodeproj
   App/                      # @main entry, app-level composition, routing
   Packages/
-    SlipStreamKit/          # API client, models, auth, websocket, keychain
+    SlipStreamKit/          # API client, models, auth, polling, keychain
     DesignSystem/           # shared SwiftUI components, theming, image cache
     Feature-Library/        # browse library (movie + tv)
     Feature-Requests/       # request flow + status (quota display cut from v1)
@@ -218,7 +218,7 @@ A typical turn: describe the screen → Claude writes Swift in a `Feature-*` pac
 
 ## 5. SlipStream API contract
 
-The app talks to **`/api/v1`** (REST) and **`/ws`** (WebSocket). Portal endpoints sit under the **`/api/v1/requests/*`** prefix (e.g. `POST /api/v1/requests/auth/login`, `GET /api/v1/requests/library/movies`, `GET /api/v1/requests/search/movie`, `POST /api/v1/requests`, `GET /api/v1/requests/:id`, `GET /api/v1/requests/inbox`). The contract is not invented here — it is read from the server:
+The app talks to the **`/api/v1`** REST surface (the `/ws` WebSocket is admin-only and unused by the app — see Real-time below). Portal endpoints sit under the **`/api/v1/requests/*`** prefix (e.g. `POST /api/v1/requests/auth/login`, `GET /api/v1/requests/library/movies`, `GET /api/v1/requests/search/movie`, `POST /api/v1/requests`, `GET /api/v1/requests/:id`, `GET /api/v1/requests/inbox`). The contract is not invented here — it is read from the server:
 
 - **Portal endpoints, auth, quotas:** `internal/portal/` (handlers, provisioner, user/quota logic) and the portal clients in `web/src/api/portal/`.
 - **Models / field shapes:** the canonical typed contract is **`web/src/types/portal.ts`** — 326 lines of hand-written interfaces (`LoginRequest`, `Request`, `PortalMovieSearchResult`, `AvailabilityInfo`, …). Mirror these as Swift `Codable` structs in `SlipStreamKit`. `RequestStatus` is an 8-state enum: `pending | approved | denied | searching | downloading | failed | available | cancelled`.
