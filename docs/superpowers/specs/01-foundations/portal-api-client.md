@@ -26,9 +26,10 @@ Mirrors the web `portalFetch` wrapper: build URLs from the persisted base + `/ap
 ## iOS notes
 - `URLSession` + async/await; extend Plan 1's client rather than starting over.
 - Emit the 401 signal once, centrally (e.g. a `NotificationCenter` post or an async stream) rather than per-call.
+- The portal JWT carries `aud: "portal"`, `role: "user"` (issuer `slipstream-portal`, 30-day expiry). Admin-only routes reject it with **401** (not 403). The same token is also accepted by the shared `/api/v1/metadata/*` group and the public `/api/v1/status` — both on base `/api/v1`, outside the `/api/v1/requests` portal base — so the client should be able to target those two bases too.
 
 ## Open questions
-- [ ] Distinguish `403` (portal token hitting an admin route) from `401`?
+- [x] ~~Distinguish `403` from `401` for a portal token on an admin route?~~ **Resolved: admin routes return `401`** ("invalid or expired token") for a portal token — treat as the standard unauthorized path.
 - [ ] Any retry/backoff policy for transient network errors, or fail fast?
 
 ## Dependencies

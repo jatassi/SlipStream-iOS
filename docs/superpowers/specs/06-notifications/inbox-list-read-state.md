@@ -2,13 +2,15 @@
 epic: 06-notifications
 status: unrefined
 type: feature
-v1: true
-plan: "— (borderline v1 — see note)"
+v1: false
+plan: "— (cut from v1 — revisit with push)"
 ---
 
 # Inbox list & read-state
 
 **Intent:** Let the user read their recent request notifications (approved / denied / available) and keep read-state effortless and consistent across devices.
+
+> ✂️ **Cut from v1** (with [the bell](inbox-bell-badge.md)). Revisit alongside [push notifications](../08-deferred/push-notifications.md); until then the [request list](../04-requests/request-list.md) carries status.
 
 ## Summary
 A compact list (popover or screen) of recent notifications with type, title, message, and relative timestamp, typed icons, an unread highlight, and empty/loading states. Opening it auto-marks-all-read; tapping an unread item marks just that one read — both mirrored to the server. A notification carries a `requestId`, so it can deep-link to the related request.

@@ -12,7 +12,7 @@ Each item is an **unrefined Feature** (Epic → Feature). Full stubs live in [`d
 
 - `[ ]` not yet built · `[x]` done
 - **Plan N** = mapped to the existing roadmap doc in [`docs/superpowers/plans/`](superpowers/plans/) (Plan 1 foundation · Plan 2 library · Plan 3 search/requests · Plan 4 polling). **—** = not covered by the current 4 plans.
-- 🟡 = borderline v1 (may be cut) · ⛔ = deferred (paid tier / server change), see Epic 08.
+- ✂️ = cut from v1 (revisit later) · ⛔ = deferred (paid tier / server change), see Epic 08.
 
 ---
 
@@ -34,14 +34,14 @@ Each item is an **unrefined Feature** (Epic → Feature). Full stubs live in [`d
 - [ ] **F2.2** [Session persistence & Keychain/Face-ID](superpowers/specs/02-authentication/session-persistence-keychain.md) — store/restore JWT, auth guard · Plan 1
 - [ ] **F2.3** [Sign out](superpowers/specs/02-authentication/sign-out.md) — clear session + cached personal data · Plan 1
 - [ ] **F2.4** [Session-expiry / 401 auto-logout](superpowers/specs/02-authentication/session-expiry-auto-logout.md) — recover from expired/rejected token · Plans 1 & 4
-- [ ] **F2.5** [Invitation signup](superpowers/specs/02-authentication/invitation-signup.md) — redeem invite, set PIN *(scope: iOS vs web-only)* · —
+- [ ] **F2.5** [Invitation signup](superpowers/specs/02-authentication/invitation-signup.md) — redeem invite, set PIN (iOS v1; manual token entry on free tier) · —
 - [ ] **F2.6** [Portal-disabled gate](superpowers/specs/02-authentication/portal-disabled-gate.md) — blocked state when the portal is off · —
 
 ### 03 — Discovery: Library & Search · Plans 2 & 3 — [epic](superpowers/specs/03-discovery/README.md)
 
 - [ ] **F3.1** [Library poster grid](superpowers/specs/03-discovery/library-poster-grid.md) — Movies/Series tabs of in-library titles · Plan 2
 - [ ] **F3.2** [Title search](superpowers/specs/03-discovery/title-search.md) — movie & series search, In-Library vs Request grouping · Plan 3
-- [ ] **F3.3** [Rich media-detail screen](superpowers/specs/03-discovery/media-detail-screen.md) — extended metadata, cast, ratings, trailer *(2nd API base path)* · —
+- [ ] **F3.3** [Rich media-detail screen](superpowers/specs/03-discovery/media-detail-screen.md) — extended metadata, cast, ratings, trailer *(2nd base `/api/v1/metadata`; portal token OK)* · —
 - [ ] **F3.4** [Per-card request state machine](superpowers/specs/03-discovery/request-state-card.md) — In Library/Available/Searching/Requested/View Request + inline progress · Plan 3
 - [ ] **F3.5** [Season & episode breakdown](superpowers/specs/03-discovery/season-episode-breakdown.md) — per-season badges, per-episode rows · Plan 3
 
@@ -61,8 +61,8 @@ Each item is an **unrefined Feature** (Epic → Feature). Full stubs live in [`d
 
 ### 06 — Notifications — [epic](superpowers/specs/06-notifications/README.md)
 
-- [ ] 🟡 **F6.1** [Inbox bell & unread indicator](superpowers/specs/06-notifications/inbox-bell-badge.md) — header bell, unread badge · —
-- [ ] 🟡 **F6.2** [Inbox list & read-state](superpowers/specs/06-notifications/inbox-list-read-state.md) — recent notifications, mark-read, deep-link · —
+- [ ] ✂️ **F6.1** [Inbox bell & unread indicator](superpowers/specs/06-notifications/inbox-bell-badge.md) — header bell, unread badge · **cut from v1** (revisit w/ push)
+- [ ] ✂️ **F6.2** [Inbox list & read-state](superpowers/specs/06-notifications/inbox-list-read-state.md) — recent notifications, mark-read, deep-link · **cut from v1** (revisit w/ push)
 - [ ] **F6.3** [Manage delivery channels](superpowers/specs/06-notifications/delivery-channels-manage.md) — list, enable/disable, test, delete · —
 - [ ] **F6.4** [Channel editor (schema-driven)](superpowers/specs/06-notifications/channel-editor-schema-form.md) — add/edit via server notifier schema · —
 
@@ -86,14 +86,16 @@ Each item is an **unrefined Feature** (Epic → Feature). Full stubs live in [`d
 
 ---
 
-## Cross-cutting open questions (resolve early — they gate scope)
+## Scope decisions — resolved 2026-06-19
 
-1. **Does a portal JWT authorize `/api/v1/metadata/*`?** — gates the [rich detail screen](superpowers/specs/03-discovery/media-detail-screen.md) (F3.3), which uses a second API base path.
-2. **Does a portal JWT authorize `/api/v1/status`?** — gates [module discovery](superpowers/specs/01-foundations/system-module-discovery.md) (F1.4) and the [portal-disabled gate](superpowers/specs/02-authentication/portal-disabled-gate.md) (F2.6); fallback is per-user `moduleSettings` from `/auth/profile`.
-3. **Is the in-app inbox in v1?** — the setup doc treats it as optional ("if you choose to surface it"). Affects F6.1/F6.2.
-4. **Is invitation signup an iOS feature, or web-only onboarding?** — affects F2.5.
+1. ✅ **Portal token authorizes `/api/v1/metadata/*`** — yes; the `/metadata` group is mounted under `AnyAuth()` (accepts the portal audience), `internal/api/routes.go:223-225`. **F3.3 stays v1.** (Caveat: needs a configured TMDB provider, else `503` — degrade gracefully.)
+2. ✅ **`/api/v1/status` is public** — no token required (`internal/api/routes.go:107-108`); returns `enabledModules` + `portalEnabled`. **F1.4 & F2.6 unblocked**; the disabled-gate works pre-auth.
+3. ✅ **In-app inbox cut from v1** — F6.1/F6.2 deferred (revisit with push); status rides on the request list. **Delivery channels F6.3/F6.4 stay v1.**
+4. ✅ **Invitation signup is an iOS feature** — F2.5 stays v1; the free tier redeems via manual token entry (universal links need the paid-tier Associated Domains entitlement).
+
+### Still open
 5. **Polling cadence** — uniform ~3s, or match the web's 5s-requests / 3s-downloads split? — affects F1.5 and the request/download features.
-6. **Notification "Test"** — the web's in-form test hits an *admin* endpoint that a portal token likely can't call; confirm the portal test path before building F6.3/F6.4.
+6. **Notification "Test"** — the portal API has `POST /notifications/{id}/test` (saved-channel test, portal-scoped); the web's *in-form unsaved* test wrongly hits an admin endpoint. iOS should test saved channels via the portal endpoint and avoid the admin path — confirm there's no portal "test-unsaved" endpoint before designing F6.4.
 
 ## Source & provenance
 

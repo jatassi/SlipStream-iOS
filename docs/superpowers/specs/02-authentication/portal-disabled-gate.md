@@ -22,10 +22,10 @@ The server exposes a `portalEnabled` flag (on the system/status endpoint). When 
 - `GET /api/v1/status` exposes `portalEnabled` (read via `useStatus()/usePortalEnabled()`); web shows `PortalDisabledView`.
 
 ## iOS notes
-- Depends on resolving the exact status endpoint and confirming it's unauthenticated-readable — ties into [system & module discovery](../01-foundations/system-module-discovery.md).
+- Confirmed: `portalEnabled` comes from the **public** `GET /api/v1/status` (`internal/api/routes.go:107-108`), so the gate works on the pre-auth login/signup screens with no token — ties into [system & module discovery](../01-foundations/system-module-discovery.md).
 
 ## Open questions
-- [ ] Which exact endpoint serves `portalEnabled`, and is it callable **without** a valid token (so the gate works on the login screen)?
+- [x] ~~Which endpoint serves `portalEnabled`, and is it callable without a token?~~ **Resolved: `GET /api/v1/status`, public** (no token needed).
 
 ## Dependencies
 - [System & module discovery](../01-foundations/system-module-discovery.md), [Portal API client](../01-foundations/portal-api-client.md).

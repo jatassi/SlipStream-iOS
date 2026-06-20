@@ -13,7 +13,7 @@ The portal credential is **username + 4-digit PIN → 30-day JWT (no refresh)**.
 - [ ] [Session persistence & Keychain/Face-ID](session-persistence-keychain.md) — store/restore the JWT, auth route guard
 - [ ] [Sign out](sign-out.md) — clear session + cached personal data
 - [ ] [Session-expiry / 401 auto-logout](session-expiry-auto-logout.md) — recover from an expired/rejected token
-- [ ] [Invitation signup](invitation-signup.md) — redeem an invite link, set a PIN (scope decision: iOS vs web-only)
+- [ ] [Invitation signup](invitation-signup.md) — redeem an invite link, set a PIN (iOS v1; manual token entry on the free tier)
 - [ ] [Portal-disabled server gate](portal-disabled-gate.md) — clear blocked state when the portal is off
 
 ## Notes

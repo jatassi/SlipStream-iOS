@@ -2,8 +2,8 @@
 epic: 06-notifications
 status: unrefined
 type: feature
-v1: true
-plan: "— (borderline v1 — see note)"
+v1: false
+plan: "— (cut from v1 — revisit with push)"
 ---
 
 # Inbox bell & unread indicator
@@ -13,7 +13,7 @@ plan: "— (borderline v1 — see note)"
 ## Summary
 A bell in the shell header with an unread red-dot fed by `GET /api/v1/requests/inbox/count`. The web shows a binary dot (not a number) and updates it on focus/refetch; iOS would refresh it via the polling engine and could optionally show the numeric count.
 
-> **Borderline v1:** the setup doc surfaces the inbox only "if you choose to surface it." If kept, it's a light addition; if cut, status is conveyed by the [request list](../04-requests/request-list.md) + [delivery channels](delivery-channels-manage.md).
+> ✂️ **Cut from v1.** Status is conveyed by the [request list](../04-requests/request-list.md)'s live 8-state status + external [delivery channels](delivery-channels-manage.md). Revisit the in-app inbox alongside [push notifications](../08-deferred/push-notifications.md).
 
 ## In scope
 - Header bell with an unread indicator from `/inbox/count`.

@@ -5,15 +5,15 @@ Two halves of "keeping the user informed about their requests":
 1. **In-app inbox** — a header bell with an unread indicator and a list of recent request-lifecycle notifications (approved / denied / available), with read-state mirrored to the server.
 2. **Delivery channels** — the user's own external notification channels (Discord, Telegram, ntfy, Pushover, email, webhook, …) that fire on their request events, configured via a server-schema-driven form.
 
-> **v1 note:** the setup doc treats the in-app inbox as optional ("plus the in-app `/inbox` history if you choose to surface it"). Push notifications (APNs) are [deferred](../08-deferred/push-notifications.md). The inbox + delivery channels here are the *non-push* ways a portal user stays informed.
+> **v1 scope:** the in-app inbox (bell + list) is **✂️ cut from v1** — status rides on the [request list](../04-requests/request-list.md)'s live states; revisit the inbox with [push (APNs)](../08-deferred/push-notifications.md). **[Delivery channels](delivery-channels-manage.md) (F6.3/F6.4) stay in v1** — they're how a portal user gets pinged outside the app today.
 
 **Maps to:** a `Feature-Notifications` slice (no dedicated plan yet).
 **Source surface:** `web/src/components/portal/notification-bell*.tsx`, `web/src/api/portal/inbox.ts`, `web/src/api/portal/notifications.ts`, `web/src/hooks/portal/{use-inbox,use-user-notifications}.ts`, `web/src/routes/requests/notification-channel*.tsx`, the shared `web/src/components/notifications/notification-dialog.tsx`.
 
 ## Features
 
-- [ ] [Inbox bell & unread indicator](inbox-bell-badge.md) — header bell, unread badge
-- [ ] [Inbox list & read-state](inbox-list-read-state.md) — recent notifications, mark-read behavior, deep-link
+- [ ] ✂️ [Inbox bell & unread indicator](inbox-bell-badge.md) — header bell, unread badge *(cut from v1)*
+- [ ] ✂️ [Inbox list & read-state](inbox-list-read-state.md) — recent notifications, mark-read, deep-link *(cut from v1)*
 - [ ] [Manage delivery channels](delivery-channels-manage.md) — list, enable/disable, test, delete
 - [ ] [Channel editor (schema-driven form)](channel-editor-schema-form.md) — add/edit via the server notifier schema
 
