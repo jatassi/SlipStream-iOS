@@ -28,8 +28,8 @@ A shared `@Observable` poller in `SlipStreamKit` refetches the active views on a
 - Decide uniform 3s vs preserving the web's 5s-requests / 3s-downloads split.
 
 ## Open questions
-- [ ] Uniform 3s (simpler) or match the web's 5s/3s split?
-- [ ] Background behavior — hard-stop, or a slow heartbeat?
+- [x] Uniform 3s (simpler) or match the web's 5s/3s split? → **Resolved (F1.5):** neither — `PollStream.interval` is per-stream and configurable, so each feature chooses its own cadence (F4.2 requests 5s, F5.1 downloads 3s); the demo stream uses 3s.
+- [x] Background behavior — hard-stop, or a slow heartbeat? → **Resolved (F1.5):** hard-stop. Only `.active` polls; both `.inactive` and `.background` cancel every driver.
 
 ## Dependencies
 - [Portal API client](portal-api-client.md); drives [request list](../04-requests/request-list.md), [downloads strip](../05-downloads/downloads-strip.md), [inbox bell](../06-notifications/inbox-bell-badge.md).
