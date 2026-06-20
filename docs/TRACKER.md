@@ -93,6 +93,10 @@ Each item is an **unrefined Feature** (Epic → Feature). Full stubs live in [`d
 - **F1.3 (Codable data contract)** — plan written 2026-06-20, not yet implemented: [`docs/superpowers/plans/2026-06-20-codable-data-contract.md`](superpowers/plans/2026-06-20-codable-data-contract.md). Mirrors the remaining `portal.ts` types into `SlipStreamKit` (enums, `JSONValue`, requests, search/availability, notifications/downloads) + a contract-drift guard; 7 TDD tasks, all headless via `swift test`.
 - **F1.5 (real-time polling engine)** — plan written 2026-06-20, not yet implemented: [`docs/superpowers/plans/2026-06-20-realtime-polling-engine.md`](superpowers/plans/2026-06-20-realtime-polling-engine.md). A shared `@MainActor @Observable PollingEngine` in `SlipStreamKit` (per-stream interval, `scenePhase`-gated, 401-suspend, enable-gated streams); 3 TDD tasks (engine core, 401-suspend, app integration), kit logic headless via `swift test`.
 
+## Development & Tooling
+
+- ✅ **Live-testing enablers** — Debug-only local dev-server support: ATS `NSAllowsLocalNetworking` exception, sign-in dev-server picker, `SLIPSTREAM_BASE_URL` / `SLIPSTREAM_DEV_USERNAME` / `SLIPSTREAM_DEV_PIN` launch overrides, dev-credential pre-fill. Release unchanged. [`docs/superpowers/plans/2026-06-20-live-testing-enablers.md`](superpowers/plans/2026-06-20-live-testing-enablers.md)
+
 ## Scope decisions — resolved 2026-06-19
 
 1. ✅ **Portal token authorizes `/api/v1/metadata/*`** — yes; the `/metadata` group is mounted under `AnyAuth()` (accepts the portal audience), `internal/api/routes.go:223-225`. **F3.3 stays v1.** (Caveat: needs a configured TMDB provider, else `503` — degrade gracefully.)
