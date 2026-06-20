@@ -4,7 +4,7 @@ Everything between "app launched" and "authenticated portal user": sign in with 
 
 The portal credential is **username + 4-digit PIN → 30-day JWT (no refresh)**. The PIN authenticates to the server; Face ID is only a *local* gate on releasing the stored token. Passkey login (which the web also offers) is **[deferred](../08-deferred/passkey-authentication.md)** — it needs the Associated Domains entitlement.
 
-**Maps to:** `Feature-Auth` + `SlipStreamKit` auth core · **Plan 1** builds the core (in progress); the rest (signup, disabled-gate) are each their own plan.
+**Maps to:** `Feature-Auth` + `SlipStreamKit` auth core · **Plan 1** built the core (✅ complete); the rest (signup, disabled-gate) are each their own plan.
 **Source surface:** `web/src/routes/requests/auth/{login,signup}.tsx`, `web/src/api/portal/auth.ts`, `web/src/hooks/portal/use-portal-auth.ts`, `web/src/components/portal/portal-auth-guard.tsx`, `web/src/components/layout/use-layout-effects.ts`.
 
 ## Features

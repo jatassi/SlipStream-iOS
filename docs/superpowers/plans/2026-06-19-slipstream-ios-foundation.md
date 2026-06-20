@@ -1,4 +1,6 @@
-# SlipStream-iOS Foundation (Plan 1 of 4) Implementation Plan
+# SlipStream-iOS Foundation (Plan 1) Implementation Plan
+
+> ✅ **COMPLETE** — implemented and squash-merged to `main` in `d268544` (2026-06-20). `swift test` green (11/11 in `SlipStreamKit`). This plan is historical; live feature status is in [`docs/TRACKER.md`](../../TRACKER.md). The original 4-plan roadmap has been dropped — remaining features each get their own plan (one plan per spec).
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
@@ -22,16 +24,11 @@
 
 ---
 
-## Plan sequence (roadmap)
+## Plan sequence
 
-This is **Plan 1 of 4**. Each plan produces working, testable software on its own.
+This was **Plan 1 (foundation)** — scaffold + `SlipStreamKit` (models/API/auth) + `Feature-Auth`; delivered: sign in, persist the token behind Face ID, stay signed in, sign out.
 
-1. **Foundation (this plan)** — scaffold + `SlipStreamKit` (models/API/auth) + `Feature-Auth`. Deliverable: sign in, persist token behind Face ID, sign out.
-2. **Library browse** — `DesignSystem` (Nuke image cache, poster grid) + `Feature-Library` (adaptive movie/series browse). Deliverable: browse the library.
-3. **Search & requests** — `Feature-Requests` (search with availability, create request, request list with the 8-state status, request detail). Deliverable: request media, see status.
-4. **Polling refresh** — a lightweight `@Observable` poller in `SlipStreamKit` that refetches the active request/downloads/inbox views on a ~3-second interval while foregrounded (mirroring how the web frontend polls today), pausing in the background. Deliverable: near-live status updates. **No WebSocket and no server change** — the portal `/ws` is admin-only today and polling covers the clients (see `~/Git/SlipStream/docs/portal-websocket-scoping-plan.md`, shelved). A real-time socket is a *future* option only if the server later adds portal push.
-
-Plans 2–4 are written as separate docs after this one lands.
+The original Plans 2–4 roadmap has been **dropped** in favor of **one plan per spec** — each remaining feature gets its own plan at refinement. See [`docs/TRACKER.md`](../../TRACKER.md) and [`docs/superpowers/specs/`](../specs/README.md) for the live backlog and per-feature plan status.
 
 ---
 

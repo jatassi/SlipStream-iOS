@@ -1,12 +1,14 @@
 ---
 epic: 02-authentication
-status: unrefined
+status: done
 type: feature
 v1: true
 plan: "Plan 1"
 ---
 
 # Sign out
+
+> **Status (2026-06-20):** ✅ **Done (core)** in Plan 1 (`d268544`) — `AuthStore.signOut()` clears the Keychain token + state and returns to the sign-in screen. Optional remaining: call `POST /auth/logout`; clear the image cache on a shared device (no images yet).
 
 **Intent:** Let the user explicitly log out, clearing their session and cached personal data, and return to the sign-in screen.
 

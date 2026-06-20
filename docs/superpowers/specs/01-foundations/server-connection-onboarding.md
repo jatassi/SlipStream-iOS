@@ -1,12 +1,14 @@
 ---
 epic: 01-foundations
-status: unrefined
+status: done
 type: feature
 v1: true
 plan: "Plan 1"
 ---
 
 # Server connection onboarding & base URL capture
+
+> **Status (2026-06-20):** ✅ **Done (core)** in Plan 1 (`d268544`) — `UserDefaultsServerConfigStore` persists the base URL and `SignInView` captures/pre-fills it. Production base URL is `https://slipstream.atassi.org/`. Deferred enhancements: reachability validation, multi-server.
 
 **Intent:** Let the user point the app at their SlipStream server by entering its HTTPS origin once, then persist it so every later launch and API call knows where to go.
 

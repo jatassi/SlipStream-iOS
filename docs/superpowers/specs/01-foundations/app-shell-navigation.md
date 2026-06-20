@@ -1,12 +1,14 @@
 ---
 epic: 01-foundations
-status: unrefined
+status: partial
 type: feature
 v1: true
 plan: "Plan 1 (app skeleton) + own plan"
 ---
 
 # App shell & primary navigation
+
+> **Status (2026-06-20):** ◑ **Partial** — Plan 1 (`d268544`) delivered the gate skeleton (`RootView` → `AuthGateView` → `SignedInPlaceholderView`). Remaining: real navigation (Home/Search/Library/Settings), header chrome, and the downloads strip.
 
 **Intent:** Give the app a consistent top-level frame so the user can move between Home, Search, Library, and Settings from any screen.
 

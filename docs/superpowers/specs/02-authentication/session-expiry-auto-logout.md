@@ -1,12 +1,14 @@
 ---
 epic: 02-authentication
-status: unrefined
+status: partial
 type: feature
 v1: true
 plan: "Plan 1"
 ---
 
 # Session-expiry / 401 auto-logout
+
+> **Status (2026-06-20):** ◑ **Partial** — Plan 1 (`d268544`) delivered the restore-path 401 handling (`AuthStore.restore()` deletes an expired token and signs out). Remaining: a central 401 handler across *all* API calls + pausing the poller on the first 401 (arrives with the API surface + poller).
 
 **Intent:** Gracefully recover when the 30-day token expires or is rejected mid-session, instead of leaving the user stuck on a broken screen.
 

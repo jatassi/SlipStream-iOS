@@ -11,7 +11,7 @@ Each item is an **unrefined Feature** (Epic → Feature). Full stubs live in [`d
 ## Legend
 
 - `[ ]` not yet built · `[x]` done
-- **One plan per spec.** Each feature below maps 1:1 to its own plan in [`docs/superpowers/plans/`](superpowers/plans/), written when that feature is refined. The **one exception is Plan 1 (foundation)** — it predates this convention and bundles the foundation + auth core, and is **currently in progress**. Features it already covers are marked **· in Plan 1**.
+- **One plan per spec.** Each feature below maps 1:1 to its own plan in [`docs/superpowers/plans/`](superpowers/plans/), written when that feature is refined. The **one exception is Plan 1 (foundation)** — it bundles the foundation + auth core and is **✅ complete** (merged `d268544`). Per-feature delivery: **· ✅ done in Plan 1** = delivered; **· ◑ Plan 1: …** = a foundation slice landed, the rest is pending in this feature's own plan.
 - ✂️ = cut from v1 (revisit later) · ⛔ = deferred (paid tier / server change), see Epic 08.
 
 ---
@@ -20,20 +20,20 @@ Each item is an **unrefined Feature** (Epic → Feature). Full stubs live in [`d
 
 ### 01 — Foundations & App Shell — [epic](superpowers/specs/01-foundations/README.md)
 
-- [ ] **F1.1** [Server connection onboarding](superpowers/specs/01-foundations/server-connection-onboarding.md) — capture & persist the HTTPS server origin (native-only) · **in Plan 1**
-- [ ] **F1.2** [Portal API client](superpowers/specs/01-foundations/portal-api-client.md) — typed client, base path, Bearer JWT, error model, 401 hook · **in Plan 1** (auth subset)
-- [ ] **F1.3** [Codable data contract](superpowers/specs/01-foundations/data-contract-models.md) — Swift mirrors of `portal.ts`; admin types excluded · **in Plan 1** (auth subset)
+- [x] **F1.1** [Server connection onboarding](superpowers/specs/01-foundations/server-connection-onboarding.md) — capture & persist the HTTPS server origin (native-only) · ✅ **done in Plan 1**
+- [ ] ◑ **F1.2** [Portal API client](superpowers/specs/01-foundations/portal-api-client.md) — typed client, base path, Bearer JWT, error model, 401 hook · ◑ **Plan 1: auth subset done**
+- [ ] ◑ **F1.3** [Codable data contract](superpowers/specs/01-foundations/data-contract-models.md) — Swift mirrors of `portal.ts`; admin types excluded · ◑ **Plan 1: auth-subset models done**
 - [ ] **F1.4** [System & module discovery](superpowers/specs/01-foundations/system-module-discovery.md) — enabled modules (movie/tv) + `portalEnabled`
 - [ ] **F1.5** [Real-time polling engine](superpowers/specs/01-foundations/polling-engine.md) — shared interval poller; no websockets
-- [ ] **F1.6** [App shell & navigation](superpowers/specs/01-foundations/app-shell-navigation.md) — Home/Search/Library/Settings chrome, adaptive · **in Plan 1** (skeleton)
+- [ ] ◑ **F1.6** [App shell & navigation](superpowers/specs/01-foundations/app-shell-navigation.md) — Home/Search/Library/Settings chrome, adaptive · ◑ **Plan 1: gate skeleton done**
 - [ ] **F1.7** [Design system & image loading](superpowers/specs/01-foundations/design-system-image-loading.md) — Nuke posters, adaptive grid, skeletons
 
 ### 02 — Authentication & Session — [epic](superpowers/specs/02-authentication/README.md)
 
-- [ ] **F2.1** [PIN sign-in](superpowers/specs/02-authentication/pin-sign-in.md) — username + 4-digit PIN, remembered username, OTP auto-submit · **in Plan 1**
-- [ ] **F2.2** [Session persistence & Keychain/Face-ID](superpowers/specs/02-authentication/session-persistence-keychain.md) — store/restore JWT, auth guard · **in Plan 1**
-- [ ] **F2.3** [Sign out](superpowers/specs/02-authentication/sign-out.md) — clear session + cached personal data · **in Plan 1**
-- [ ] **F2.4** [Session-expiry / 401 auto-logout](superpowers/specs/02-authentication/session-expiry-auto-logout.md) — recover from expired/rejected token · **in Plan 1**
+- [ ] ◑ **F2.1** [PIN sign-in](superpowers/specs/02-authentication/pin-sign-in.md) — username + 4-digit PIN, remembered username, OTP auto-submit · ◑ **Plan 1: core sign-in done**
+- [x] **F2.2** [Session persistence & Keychain/Face-ID](superpowers/specs/02-authentication/session-persistence-keychain.md) — store/restore JWT, auth guard · ✅ **done in Plan 1**
+- [x] **F2.3** [Sign out](superpowers/specs/02-authentication/sign-out.md) — clear session + cached personal data · ✅ **done in Plan 1** (core)
+- [ ] ◑ **F2.4** [Session-expiry / 401 auto-logout](superpowers/specs/02-authentication/session-expiry-auto-logout.md) — recover from expired/rejected token · ◑ **Plan 1: restore-path 401 done**
 - [ ] **F2.5** [Invitation signup](superpowers/specs/02-authentication/invitation-signup.md) — redeem invite, set PIN (iOS v1; manual token entry on free tier)
 - [ ] **F2.6** [Portal-disabled gate](superpowers/specs/02-authentication/portal-disabled-gate.md) — blocked state when the portal is off
 
@@ -89,7 +89,7 @@ Each item is an **unrefined Feature** (Epic → Feature). Full stubs live in [`d
 ## Plans
 
 - **Convention: one plan per spec.** When a feature is refined, write a single plan for it under [`docs/superpowers/plans/`](superpowers/plans/) (named for the feature). There is no Plans 2–4 roadmap — each spec is its own plan.
-- **Plan 1 (foundation)** is the one exception and is **in progress**: [`docs/superpowers/plans/2026-06-19-slipstream-ios-foundation.md`](superpowers/plans/2026-06-19-slipstream-ios-foundation.md). It bundles the foundation + auth core (the features marked **· in Plan 1** above). Its own internal "Plan sequence" section still describes the superseded 2–4 roadmap — that's left untouched while it's being implemented; trim it once Plan 1 lands.
+- **Plan 1 (foundation)** is **✅ complete** — implemented and squash-merged to `main` in `d268544` (2026-06-20); `swift test` green (11/11). [`docs/superpowers/plans/2026-06-19-slipstream-ios-foundation.md`](superpowers/plans/2026-06-19-slipstream-ios-foundation.md). It delivered the features marked **· ✅ done / ◑ Plan 1** above; its internal roadmap section has been trimmed to match the one-plan-per-spec model.
 
 ## Scope decisions — resolved 2026-06-19
 

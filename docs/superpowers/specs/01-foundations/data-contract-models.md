@@ -1,12 +1,14 @@
 ---
 epic: 01-foundations
-status: unrefined
+status: partial
 type: feature
 v1: true
 plan: "Plan 1 (auth subset; grows per feature)"
 ---
 
 # Codable data contract (mirror of portal.ts)
+
+> **Status (2026-06-20):** ◑ **Partial** — Plan 1 (`d268544`) delivered the auth-subset models (`PortalUser`, `UserModuleSetting`, `LoginRequest`/`LoginResponse`). Remaining: `Request`/`RequestStatus`, search/availability, `PortalDownload`, notifications, enriched seasons/episodes, etc.
 
 **Intent:** Define the Swift `Codable` types that mirror the server's hand-written `portal.ts` so every feature decodes the same canonical shapes — there is no OpenAPI spec to generate from.
 

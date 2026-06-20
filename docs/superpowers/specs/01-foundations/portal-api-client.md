@@ -1,12 +1,14 @@
 ---
 epic: 01-foundations
-status: unrefined
+status: partial
 type: feature
 v1: true
 plan: "Plan 1 (auth subset; grows per feature)"
 ---
 
 # Portal API client (Bearer JWT + base path + error model)
+
+> **Status (2026-06-20):** ◑ **Partial** — Plan 1 (`d268544`) delivered the auth slice: `PortalAPIClient` (base `api/v1/requests`, Bearer, typed `APIClientError`) conforming to `AuthAPI` (`login`/`profile`). Remaining: the full endpoint surface (search/library/requests/inbox/notifications), `204`/empty handling, a central `401` hook, and support for the `/api/v1/metadata` + public `/api/v1/status` bases.
 
 **Intent:** Give every feature one HTTP client that roots calls at `/api/v1/requests`, attaches the stored JWT, and parses responses/errors uniformly — so feature code never re-implements networking.
 

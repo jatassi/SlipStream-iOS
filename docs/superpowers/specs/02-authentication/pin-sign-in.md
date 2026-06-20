@@ -1,12 +1,14 @@
 ---
 epic: 02-authentication
-status: unrefined
+status: partial
 type: feature
 v1: true
 plan: "Plan 1"
 ---
 
 # PIN sign-in (username + 4-digit PIN)
+
+> **Status (2026-06-20):** ◑ **Partial** — Plan 1 (`d268544`) delivered core sign-in (`SignInView`: server URL + username + 4-digit numeric PIN + error display + server-URL pre-fill). Remaining: remembered-username + Switch User, and OTP auto-submit.
 
 **Intent:** Let a returning user sign in with their username and 4-digit PIN to obtain a portal JWT and land in the requests experience.
 

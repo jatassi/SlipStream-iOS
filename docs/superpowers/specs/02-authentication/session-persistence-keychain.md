@@ -1,12 +1,14 @@
 ---
 epic: 02-authentication
-status: unrefined
+status: done
 type: feature
 v1: true
 plan: "Plan 1"
 ---
 
 # Session persistence & Keychain / Face-ID gate
+
+> **Status (2026-06-20):** ✅ **Done** in Plan 1 (`d268544`) — `KeychainTokenStore` (`.userPresence`, `WhenUnlockedThisDeviceOnly`), `AuthStore.restore()`, and the `AuthGateView` route guard. Verified by the Kit unit tests.
 
 **Intent:** Keep the user signed in across launches and attach their token to every call — without a refresh flow — while gating token release behind Face ID.
 

@@ -4,7 +4,7 @@ The platform layer every other feature stands on: a token-authenticated HTTP cli
 
 This isn't user-facing on its own — it's the contract and chrome the rest of the app composes against.
 
-**Maps to:** `SlipStreamKit` + `App` shell + `DesignSystem` packages. **Plan 1** (in progress) builds the foundation + auth core + app skeleton; the rest are each their own plan.
+**Maps to:** `SlipStreamKit` + `App` shell + `DesignSystem` packages. **Plan 1** (✅ complete) built the foundation + auth-core slice + app skeleton; the rest are each their own plan.
 **Source surface:** `web/src/api/portal/client.ts`, `web/src/api/portal/index.ts`, `web/src/types/portal.ts`, `web/src/components/portal/portal-layout.tsx` + `portal-header.tsx`, `web/src/hooks/portal/*`, `web/src/stores/ui.ts`.
 
 ## Features
@@ -19,6 +19,6 @@ This isn't user-facing on its own — it's the contract and chrome the rest of t
 
 ## Notes
 
-- **Plan 1** (in progress) builds the networking/auth core (`PortalAPIClient`, `APIClientError`, the auth-subset models) and the app skeleton. The remaining foundation features — module discovery, polling engine, design system, full nav shell — are each their own plan (written at refinement). The stubs here describe the full portal surface those plans grow into.
+- **Plan 1** (✅ complete, `d268544`) built the networking/auth-core slice (`PortalAPIClient`, `APIClientError`, the auth-subset models) and the app skeleton. The remaining foundation features — module discovery, polling engine, design system, full nav shell — are each their own plan (written at refinement). The stubs here describe the full portal surface those plans grow into.
 - The portal has **no websocket** for portal tokens (the server `/ws` is admin-audience only); real-time is polling. The web app's live download strip is actually WebSocket-fed (`queue:state`) with client-side matching — see [Epic 05 · request↔download matching](../05-downloads/download-request-matching.md).
 - One contract subtlety: the rich media-detail screen pulls **extended metadata from a second base path** (`/api/v1/metadata/*`, base `/api/v1`, not `/api/v1/requests`). Confirmed a **portal token is authorized** there (the `/metadata` group uses `AnyAuth()`) — see [Epic 03](../03-discovery/media-detail-screen.md). So the API client should support this second base too.
