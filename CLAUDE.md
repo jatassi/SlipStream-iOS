@@ -30,5 +30,5 @@ Targets the portal surface only. iOS 26+, Swift 6.
 ## Mandatory Directives
 - When spawning subagents, always prefix their labels with the model name in brackets (e.g., `[Opus (1M)] Do the thing`, `[Sonnet] Do the less complicated thing`)
 - This is a solo repo, you have free reign to commit and push directly to `main`
-- Run the `/code-review` skill before merging to `main` and triage findings with bias towards acceptance
+- Run the `/code-review` skill before merging non-`docs/` changes to `main` and triage findings with bias towards acceptance.
 - Always squash merge to `main`
