@@ -5,7 +5,7 @@ Targets the portal surface only. iOS 26+, Swift 6.
 
 ## Build / test (use XcodeBuildMCP — do not shell out to xcodebuild directly)
 - Build (sim):  mcp__xcodebuildmcp__build_sim
-- Test (sim):   mcp__xcodebuildmcp__test_sim
+- Test (sim):   mcp__xcodebuildmcp__test_sim (see `/test-with-dev-server` skill)
 - Build (Mac):  build for the "My Mac (Designed for iPad)" destination — runs natively, no simulator
 - Clean:        mcp__xcodebuildmcp__clean   (before major rebuilds)
 - Logs:         mcp__xcodebuildmcp__start_sim_log_cap / stop_sim_log_cap
