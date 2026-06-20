@@ -3,7 +3,7 @@ epic: 01-foundations
 status: unrefined
 type: feature
 v1: true
-plan: "Plans 1–3"
+plan: "Plan 1 (auth subset; grows per feature)"
 ---
 
 # Codable data contract (mirror of portal.ts)

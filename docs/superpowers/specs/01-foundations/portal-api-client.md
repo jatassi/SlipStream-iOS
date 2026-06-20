@@ -3,7 +3,7 @@ epic: 01-foundations
 status: unrefined
 type: feature
 v1: true
-plan: "Plan 1 (extended in 2–4)"
+plan: "Plan 1 (auth subset; grows per feature)"
 ---
 
 # Portal API client (Bearer JWT + base path + error model)

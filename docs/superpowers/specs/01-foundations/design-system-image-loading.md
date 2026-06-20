@@ -3,7 +3,7 @@ epic: 01-foundations
 status: unrefined
 type: feature
 v1: true
-plan: "Plan 2"
+plan: "own plan"
 ---
 
 # Design system & image loading
@@ -24,7 +24,7 @@ A `DesignSystem` package with Nuke-backed cached image loading, an adaptive post
 - Setup doc §1 names **Nuke** as the image stack.
 
 ## iOS notes
-- `DesignSystem` package (Plan 2); persist poster size in a preference store shared across media surfaces.
+- `DesignSystem` package (its own plan); persist poster size in a preference store shared across media surfaces.
 - Consider clearing the Nuke cache on sign-out (shared family device) — see [sign-out](../02-authentication/sign-out.md).
 
 ## Open questions

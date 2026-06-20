@@ -3,7 +3,7 @@ epic: 02-authentication
 status: unrefined
 type: feature
 v1: true
-plan: "— (iOS v1)"
+plan: "own plan"
 ---
 
 # Invitation signup (redeem invite → set PIN)

@@ -2,7 +2,7 @@
 
 The core portal action: submit a request, track your own (and optionally the household's) requests with live status, drill into one, cancel it before approval, and follow requests you didn't create. This is the heart of the portal experience after discovery.
 
-**Maps to:** `Feature-Requests` · roadmap **Plan 3** (with live status from **Plan 4**).
+**Maps to:** `Feature-Requests`; each feature is its own plan (live status via the [polling engine](../01-foundations/polling-engine.md), F1.5).
 **Source surface:** `web/src/api/portal/requests.ts`, `web/src/hooks/portal/use-requests.ts`, `web/src/routes/requests/{index,$id,request-detail-*,request-status-config,series-request-dialog}.tsx`.
 
 ## Features

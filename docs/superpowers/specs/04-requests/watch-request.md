@@ -3,7 +3,7 @@ epic: 04-requests
 status: unrefined
 type: feature
 v1: true
-plan: "Plan 3"
+plan: "own plan"
 ---
 
 # Watch / unwatch another user's request

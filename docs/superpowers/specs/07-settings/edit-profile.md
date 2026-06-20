@@ -3,7 +3,7 @@ epic: 07-settings
 status: unrefined
 type: feature
 v1: true
-plan: "— (optional)"
+plan: "own plan (optional)"
 ---
 
 # Edit profile (username)

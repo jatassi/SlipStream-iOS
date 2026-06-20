@@ -3,7 +3,7 @@ epic: 03-discovery
 status: unrefined
 type: feature
 v1: true
-plan: "Plan 3"
+plan: "own plan"
 ---
 
 # Series season & episode breakdown

@@ -3,7 +3,7 @@ epic: 03-discovery
 status: unrefined
 type: feature
 v1: true
-plan: "— (beyond current plans)"
+plan: "own plan"
 ---
 
 # Rich media-detail screen (extended metadata)

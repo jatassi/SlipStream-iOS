@@ -3,7 +3,7 @@ epic: 06-notifications
 status: unrefined
 type: feature
 v1: true
-plan: "—"
+plan: "own plan"
 ---
 
 # Channel editor (schema-driven form)

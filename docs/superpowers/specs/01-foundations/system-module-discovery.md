@@ -3,7 +3,7 @@ epic: 01-foundations
 status: unrefined
 type: feature
 v1: true
-plan: "— (beyond current plans)"
+plan: "own plan"
 ---
 
 # System & enabled-module discovery

@@ -3,7 +3,7 @@ epic: 02-authentication
 status: unrefined
 type: feature
 v1: true
-plan: "Plans 1 & 4"
+plan: "Plan 1"
 ---
 
 # Session-expiry / 401 auto-logout
@@ -21,7 +21,7 @@ A `401` from any portal call triggers a client-side logout and a return to PIN e
 ## Source of truth (web portal)
 - Auth area "Session-Expiry / Unauthorized Auto-Logout"; App-shell "Global Session-Expiry (401) Handling".
 - Web mechanism: a global `auth:unauthorized` listener in `web/src/components/layout/use-layout-effects.ts`.
-- Already partial: **Plan 1** `restore()` 401 path; **Plan 4** poller.
+- Already partial: **Plan 1** `restore()` 401 path; the poller is its own plan ([F1.5](../01-foundations/polling-engine.md)).
 
 ## iOS notes
 - Subscribe to the API client's 401 signal centrally; pause the [poller](../01-foundations/polling-engine.md) at once.

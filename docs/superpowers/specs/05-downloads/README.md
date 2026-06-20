@@ -2,7 +2,7 @@
 
 Read-only, live download progress for the user's own requests: an app-wide strip of everything in flight, a per-request progress card, and the matching logic that ties queue items back to requests. Updates come from polling the **user-scoped** downloads endpoint (the server filters to the caller's own requests).
 
-**Maps to:** the live-progress slice of `Feature-Requests` + the **Plan 4** poller.
+**Maps to:** the live-progress slice of `Feature-Requests`; uses the [polling engine](../01-foundations/polling-engine.md) (F1.5). Each feature here is its own plan.
 **Source surface:** `web/src/components/portal/portal-downloads.tsx`, `web/src/routes/requests/request-download-progress.tsx` + `request-download-utils.ts`, `web/src/api/portal/requests.ts` (`downloads`), plus the web's WebSocket queue path (`stores/portal-downloads.ts`, `stores/ws-message-handlers.ts`).
 
 ## Features

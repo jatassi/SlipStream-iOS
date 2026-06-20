@@ -2,7 +2,7 @@
 
 How a user finds media: browse what's already in the library, search the catalog by title, open a rich detail screen, and see — per card — whether a title is in the library, available, already requested, or requestable. This is the surface that feeds [Media Requests](../04-requests/README.md).
 
-**Maps to:** `Feature-Library` + the discovery half of `Feature-Requests` · roadmap **Plans 2 & 3**.
+**Maps to:** `Feature-Library` + the discovery half of `Feature-Requests`; each feature is its own plan.
 **Source surface:** `web/src/routes/requests/{library,search}*.tsx`, `web/src/api/portal/{library,search}.ts`, `web/src/hooks/portal/use-portal-{library,search}.ts`, and the **shared media components** in `web/src/components/search/**` (modal, cards, seasons list, action buttons).
 
 ## Features

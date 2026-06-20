@@ -3,7 +3,7 @@ epic: 02-authentication
 status: unrefined
 type: feature
 v1: true
-plan: "—"
+plan: "own plan"
 ---
 
 # Portal-disabled server gate

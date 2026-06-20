@@ -3,7 +3,7 @@ epic: 01-foundations
 status: unrefined
 type: feature
 v1: true
-plan: "Plan 4"
+plan: "own plan"
 ---
 
 # Real-time polling engine
@@ -24,7 +24,7 @@ A shared `@Observable` poller in `SlipStreamKit` refetches the active views on a
 - Web's live download strip is actually WebSocket-fed (`queue:state`) — that path is admin/infra and out of scope; see [Epic 05 · matching](../05-downloads/download-request-matching.md).
 
 ## iOS notes
-- Single poller (Plan 4); respect `scenePhase`; don't poll an idle app.
+- Single poller (its own plan); respect `scenePhase`; don't poll an idle app.
 - Decide uniform 3s vs preserving the web's 5s-requests / 3s-downloads split.
 
 ## Open questions

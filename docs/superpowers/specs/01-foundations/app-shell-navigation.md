@@ -3,7 +3,7 @@ epic: 01-foundations
 status: unrefined
 type: feature
 v1: true
-plan: "Plan 2+ (RootView shell in Plan 1)"
+plan: "Plan 1 (app skeleton) + own plan"
 ---
 
 # App shell & primary navigation

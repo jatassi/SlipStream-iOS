@@ -4,7 +4,7 @@ Unrefined feature backlog for the **SlipStream iOS portal-companion app**, combe
 
 These are **Epics → Features**. Each feature here is an *unrefined stub*: enough for a refiner to know the intent and where to look, deliberately light on implementation detail so it doesn't go stale as the build progresses. Refinement breaks each stub into Tasks (not created here).
 
-See [`docs/TRACKER.md`](../../TRACKER.md) for the full checkbox enumeration, v1-vs-deferred status, and the mapping onto the existing 4-plan roadmap (`docs/superpowers/plans/`).
+See [`docs/TRACKER.md`](../../TRACKER.md) for the full checkbox enumeration, v1-vs-deferred status, and per-feature plan status. **Plans map 1:1 to specs** — each feature here becomes one plan in `docs/superpowers/plans/` when refined; **Plan 1 (foundation)** is the one exception (it bundles the foundation + auth core and is in progress).
 
 ## Epics
 

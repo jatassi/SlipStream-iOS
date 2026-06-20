@@ -3,7 +3,7 @@ epic: 03-discovery
 status: unrefined
 type: feature
 v1: true
-plan: "Plan 2"
+plan: "own plan"
 ---
 
 # Library poster grid (Movies / Series tabs)

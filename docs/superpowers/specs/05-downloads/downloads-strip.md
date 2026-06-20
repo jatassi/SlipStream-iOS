@@ -3,7 +3,7 @@ epic: 05-downloads
 status: unrefined
 type: feature
 v1: true
-plan: "Plan 4"
+plan: "own plan"
 ---
 
 # Global active-downloads strip
