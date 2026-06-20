@@ -21,7 +21,7 @@ Each item is an **unrefined Feature** (Epic → Feature). Full stubs live in [`d
 ### 01 — Foundations & App Shell — [epic](superpowers/specs/01-foundations/README.md)
 
 - [x] **F1.1** [Server connection onboarding](superpowers/specs/01-foundations/server-connection-onboarding.md) — capture & persist the HTTPS server origin (native-only) · ✅ **done in Plan 1**
-- [ ] ◑ **F1.2** [Portal API client](superpowers/specs/01-foundations/portal-api-client.md) — typed client, base path, Bearer JWT, error model, 401 hook · ◑ **Plan 1: auth subset done**
+- [ ] ◑ **F1.2** [Portal API client](superpowers/specs/01-foundations/portal-api-client.md) — typed client, base path, Bearer JWT, error model, 401 hook · ◑ **Plan 1: auth subset done** · 📋 [plan](superpowers/plans/2026-06-20-portal-api-client.md)
 - [ ] ◑ **F1.3** [Codable data contract](superpowers/specs/01-foundations/data-contract-models.md) — Swift mirrors of `portal.ts`; admin types excluded · ◑ **Plan 1: auth-subset models done** · 📋 [plan](superpowers/plans/2026-06-20-codable-data-contract.md)
 - [ ] **F1.4** [System & module discovery](superpowers/specs/01-foundations/system-module-discovery.md) — enabled modules (movie/tv) + `portalEnabled`
 - [ ] **F1.5** [Real-time polling engine](superpowers/specs/01-foundations/polling-engine.md) — shared interval poller; no websockets
