@@ -1,6 +1,6 @@
 ---
 epic: 02-authentication
-status: partial
+status: done
 type: feature
 v1: true
 plan: "Plan 1"
@@ -8,7 +8,7 @@ plan: "Plan 1"
 
 # PIN sign-in (username + 4-digit PIN)
 
-> **Status (2026-06-20):** ◑ **Partial** — Plan 1 (`d268544`) delivered core sign-in (`SignInView`: server URL + username + 4-digit numeric PIN + error display + server-URL pre-fill). Remaining: remembered-username + Switch User, and OTP auto-submit.
+> **Status (2026-06-21):** ✅ **Done** — Plan 1 (`d268544`) delivered core sign-in; F2.1's own pass added the remaining pieces: a remembered last-username collapsed into a chip with **Switch User** (`LastUsernameStore` in `SlipStreamKit`, persisted on successful sign-in only), a 4-slot masked `PINEntryField` (number pad, dot mask, active-slot highlight), and **OTP auto-submit** the moment the PIN completes with a username present (focus-gated so a pre-filled dev PIN never auto-logs-in), clearing the PIN on failure. Kit logic headless via `swift test`; full sign-in / remembered-chip / Switch User / auto-submit loop verified on iPhone 17 against the live dev server.
 
 **Intent:** Let a returning user sign in with their username and 4-digit PIN to obtain a portal JWT and land in the requests experience.
 

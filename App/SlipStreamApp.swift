@@ -20,7 +20,8 @@ struct SlipStreamApp: App {
     let initialAuth = AuthStore(
       makeAuthAPI: { url in PortalAPIClient(baseURL: url) },
       tokenStore: KeychainTokenStore(),
-      serverConfig: UserDefaultsServerConfigStore()
+      serverConfig: UserDefaultsServerConfigStore(),
+      lastUsernameStore: UserDefaultsLastUsernameStore()
     )
     // A 401 from any poll means the JWT expired: sign out. (F2.4 expands the recovery UX.)
     let initialPoller = PollingEngine(onUnauthorized: { [weak initialAuth] in

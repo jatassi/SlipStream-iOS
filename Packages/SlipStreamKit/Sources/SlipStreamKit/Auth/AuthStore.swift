@@ -23,20 +23,26 @@ public final class AuthStore {
   private let makeAuthAPI: @Sendable (URL) -> AuthAPI
   private let tokenStore: TokenStore
   private let serverConfig: ServerConfigStore
+  private let lastUsernameStore: LastUsernameStore
   private var token: String?
 
   public init(
     makeAuthAPI: @escaping @Sendable (URL) -> AuthAPI,
     tokenStore: TokenStore,
-    serverConfig: ServerConfigStore
+    serverConfig: ServerConfigStore,
+    lastUsernameStore: LastUsernameStore
   ) {
     self.makeAuthAPI = makeAuthAPI
     self.tokenStore = tokenStore
     self.serverConfig = serverConfig
+    self.lastUsernameStore = lastUsernameStore
   }
 
   public var currentToken: String? { token }
   public var serverBaseURLString: String? { serverConfig.baseURL?.absoluteString }
+
+  /// The last successfully signed-in username, for pre-filling the sign-in form.
+  public var lastUsername: String? { lastUsernameStore.lastUsername }
 
   /// Try to resume a session: load the JWT (Face ID), validate it by fetching the profile.
   public func restore() async {
@@ -76,6 +82,7 @@ public final class AuthStore {
         .login(LoginRequest(username: username, password: pin))
       try tokenStore.save(resp.token)
       serverConfig.setBaseURL(serverURL)
+      lastUsernameStore.setLastUsername(username)
       token = resp.token
       state = .signedIn(resp.user)
     } catch let APIClientError.http(status, _, _) where status == 401 {
@@ -95,6 +102,12 @@ public final class AuthStore {
     try? tokenStore.delete()
     token = nil
     state = .signedOut
+  }
+
+  /// Dismiss the current sign-in error (e.g. when the user starts over via
+  /// "Switch User") so a stale failure message doesn't linger over a fresh form.
+  public func clearError() {
+    lastError = nil
   }
 
   private func isValidPIN(_ pin: String) -> Bool {

@@ -10,12 +10,14 @@ import Testing
   private func makeStore(
     api: FakeAuthAPI,
     tokenStore: FakeTokenStore = FakeTokenStore(),
-    config: FakeServerConfigStore = FakeServerConfigStore()
+    config: FakeServerConfigStore = FakeServerConfigStore(),
+    lastUsername: FakeLastUsernameStore = FakeLastUsernameStore()
   ) -> AuthStore {
     AuthStore(
       makeAuthAPI: { _ in api },
       tokenStore: tokenStore,
-      serverConfig: config
+      serverConfig: config,
+      lastUsernameStore: lastUsername
     )
   }
 
@@ -114,5 +116,76 @@ import Testing
 
     #expect(store.state == .signedOut)
     #expect(store.hasAttemptedRestore == true)
+  }
+
+  @Test func signInSuccessRemembersUsername() async {
+    let api = FakeAuthAPI(
+      onLogin: { _ in LoginResponse(token: "tok", user: sampleUser(), isAdmin: false) },
+      onProfile: { _ in sampleUser() }
+    )
+    let remembered = FakeLastUsernameStore()
+    let store = makeStore(api: api, lastUsername: remembered)
+
+    await store.signIn(serverURL: serverURL, username: "jack", pin: "1234")
+
+    #expect(remembered.lastUsername == "jack")
+    #expect(remembered.setCount == 1)
+    #expect(store.lastUsername == "jack")
+  }
+
+  @Test func signInBadCredentialsDoesNotRememberUsername() async {
+    let api = FakeAuthAPI(
+      onLogin: { _ in throw APIClientError.http(status: 401, message: "bad", error: nil) },
+      onProfile: { _ in sampleUser() }
+    )
+    let remembered = FakeLastUsernameStore()
+    let store = makeStore(api: api, lastUsername: remembered)
+
+    await store.signIn(serverURL: serverURL, username: "jack", pin: "0000")
+
+    #expect(remembered.lastUsername == nil)
+    #expect(remembered.setCount == 0)
+    #expect(store.lastUsername == nil)
+  }
+
+  @Test func invalidPINDoesNotRememberUsername() async {
+    let api = FakeAuthAPI(
+      onLogin: { _ in
+        Issue.record("should not call login")
+        throw APIClientError.transport("x")
+      },
+      onProfile: { _ in sampleUser() }
+    )
+    let remembered = FakeLastUsernameStore()
+    let store = makeStore(api: api, lastUsername: remembered)
+
+    await store.signIn(serverURL: serverURL, username: "jack", pin: "12")
+
+    #expect(remembered.setCount == 0)
+    #expect(store.lastUsername == nil)
+  }
+
+  @Test func exposesRememberedUsernameFromStore() {
+    let api = FakeAuthAPI(
+      onLogin: { _ in throw APIClientError.transport("x") },
+      onProfile: { _ in sampleUser() }
+    )
+    let store = makeStore(api: api, lastUsername: FakeLastUsernameStore(lastUsername: "remembered"))
+
+    #expect(store.lastUsername == "remembered")
+  }
+
+  @Test func clearErrorResetsLastError() async {
+    let api = FakeAuthAPI(
+      onLogin: { _ in throw APIClientError.http(status: 401, message: "bad", error: nil) },
+      onProfile: { _ in sampleUser() }
+    )
+    let store = makeStore(api: api)
+
+    await store.signIn(serverURL: serverURL, username: "jack", pin: "0000")
+    #expect(store.lastError == .badCredentials)
+
+    store.clearError()
+    #expect(store.lastError == nil)
   }
 }

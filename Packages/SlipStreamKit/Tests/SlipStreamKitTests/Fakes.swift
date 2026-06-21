@@ -25,6 +25,16 @@ final class FakeServerConfigStore: ServerConfigStore, @unchecked Sendable {
   func setBaseURL(_ url: URL) { self.url = url }
 }
 
+final class FakeLastUsernameStore: LastUsernameStore, @unchecked Sendable {
+  var lastUsername: String?
+  private(set) var setCount = 0
+  init(lastUsername: String? = nil) { self.lastUsername = lastUsername }
+  func setLastUsername(_ username: String) {
+    lastUsername = username
+    setCount += 1
+  }
+}
+
 struct FakeAuthAPI: AuthAPI {
   var onLogin: @Sendable (LoginRequest) async throws -> LoginResponse
   var onProfile: @Sendable (String) async throws -> PortalUser

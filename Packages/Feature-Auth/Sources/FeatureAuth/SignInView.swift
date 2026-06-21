@@ -7,6 +7,13 @@ public struct SignInView: View {
   @State private var username = ""
   @State private var pin = ""
   @State private var isSubmitting = false
+  /// Whether the username is shown as an editable field (true) or collapsed into
+  /// a chip with a "Switch User" affordance (false), once a remembered username
+  /// is present. Mirrors the web's `showUsernameInput`.
+  @State private var isEditingUsername = true
+  @State private var hasPopulated = false
+  @FocusState private var usernameFocused: Bool
+  @FocusState private var pinFocused: Bool
 
   public init() {}
 
@@ -26,7 +33,7 @@ public struct SignInView: View {
         .disabled(!canSubmit || isSubmitting)
       }
     }
-    .onAppear { populateFromDefaults() }
+    .onAppear(perform: populateIfNeeded)
   }
 
   @ViewBuilder private var serverSection: some View {
@@ -48,15 +55,43 @@ public struct SignInView: View {
 
   @ViewBuilder private var credentialsSection: some View {
     Section("Sign In") {
+      usernameField
+      VStack(alignment: .leading, spacing: 10) {
+        Text("PIN")
+          .font(.subheadline)
+          .foregroundStyle(.secondary)
+        PINEntryField(pin: $pin, isFocused: $pinFocused)
+          .onChange(of: pin) { _, newValue in maybeAutoSubmit(pin: newValue) }
+      }
+      .padding(.vertical, 4)
+    }
+  }
+
+  @ViewBuilder private var usernameField: some View {
+    if isEditingUsername {
       TextField("Username", text: $username)
         .autocorrectionDisabled()
         .textInputAutocapitalization(.never)
-      SecureField("4-digit PIN", text: $pin)
-        .keyboardType(.numberPad)
-        .onChange(of: pin) { _, newValue in
-          pin = String(newValue.prefix(4).filter(\.isNumber))
-        }
+        .textContentType(.username)
+        .focused($usernameFocused)
+        .submitLabel(.next)
+        .onSubmit { pinFocused = true }
+    } else {
+      HStack(spacing: 10) {
+        Image(systemName: "person.crop.circle.fill")
+          .foregroundStyle(.secondary)
+          .accessibilityHidden(true)
+        Text(username)
+          .fontWeight(.medium)
+        Spacer()
+        Button("Switch User", action: switchUser)
+          .font(.subheadline)
+      }
     }
+  }
+
+  private var trimmedUsername: String {
+    username.trimmingCharacters(in: .whitespaces)
   }
 
   private var canSubmit: Bool {
@@ -65,15 +100,53 @@ public struct SignInView: View {
       ServerURLValidator.isAcceptable(
         url, allowInsecureLocal: DevSupport.allowsInsecureLocalServers)
     else { return false }
-    return !username.isEmpty && pin.count == 4
+    return !trimmedUsername.isEmpty && pin.count == 4
+  }
+
+  /// Auto-submit the moment the PIN is complete and a username is present — but
+  /// only in response to the user typing (PIN focused), so a pre-filled dev PIN
+  /// never logs in on its own. Mirrors the web's `pin.length === 4` effect.
+  private func maybeAutoSubmit(pin newValue: String) {
+    guard pinFocused, !isSubmitting else { return }
+    guard newValue.count == 4, !trimmedUsername.isEmpty else { return }
+    submit()
+  }
+
+  private func switchUser() {
+    username = ""
+    pin = ""
+    auth.clearError()
+    isEditingUsername = true
+    usernameFocused = true
   }
 
   private func submit() {
-    guard let url = URL(string: serverURLString) else { return }
+    guard let url = URL(string: serverURLString), canSubmit else { return }
     isSubmitting = true
     Task {
-      await auth.signIn(serverURL: url, username: username, pin: pin)
+      // Send (and remember) the trimmed username so it matches the value the
+      // `canSubmit` / auto-submit gates validate — stray whitespace never
+      // reaches the server or `LastUsernameStore`.
+      await auth.signIn(serverURL: url, username: trimmedUsername, pin: pin)
       isSubmitting = false
+      // On failure keep the username but clear the PIN (matches the web's
+      // `onError: setPin('')`); on success the gate swaps in the signed-in UI.
+      if auth.lastError != nil {
+        pin = ""
+      }
+    }
+  }
+
+  private func populateIfNeeded() {
+    guard !hasPopulated else { return }
+    hasPopulated = true
+    populateFromDefaults()
+    if username.isEmpty, let remembered = auth.lastUsername, !remembered.isEmpty {
+      username = remembered
+    }
+    isEditingUsername = trimmedUsername.isEmpty
+    if isEditingUsername {
+      usernameFocused = true
     }
   }
 
