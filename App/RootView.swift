@@ -17,9 +17,8 @@ struct RootView: View {
   var body: some View {
     AuthGateView {
       AppShellView()
-        // Re-enable polling on a fresh sign-in: a prior 401 suspends the engine
-        // (PollingEngine.handleUnauthorized) and only resume() clears it. (F2.4
-        // expands the recovery UX.)
+        // Re-enable polling on a fresh sign-in: a 401 auto-logout suspends the engine
+        // (via SessionExpiry) and only resume() clears it. (F2.4)
         .onAppear { poller.resume() }
         // Refresh system discovery (enabled modules + portalEnabled) on the
         // signed-in path. F1.4 wiring; previously triggered by the removed
@@ -30,7 +29,7 @@ struct RootView: View {
       poller.setActivity(activity(for: phase))
     }
     // Drop cached poster artwork whenever the session ends — manual sign-out or
-    // F2.4's future 401 auto-logout. Shared family device. (F1.7)
+    // a 401 auto-logout (F2.4, via SessionExpiry). Shared family device. (F1.7)
     .onChange(of: auth.state) { _, state in
       if state == .signedOut { PosterImagePipeline.clearImageCache() }
     }

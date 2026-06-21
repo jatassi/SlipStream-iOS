@@ -98,7 +98,15 @@ public final class AuthStore {
     }
   }
 
+  /// Clear the session and return to PIN entry. Idempotent: a no-op when already signed out,
+  /// so a single expired token reaching both the poll-path and the non-poll client hook
+  /// (via `SessionExpiry`) can't re-delete the keychain item or redundantly republish `state`.
+  /// The guard is safe because `state == .signedOut` always implies the token is already cleared
+  /// (a non-nil `token` is only ever set alongside `state = .signedIn`). Same behavior for a user
+  /// tap or an auto-logout — the remembered username (F2.1) is kept either way, so re-entry is one
+  /// PIN away.
   public func signOut() {
+    guard state != .signedOut else { return }
     try? tokenStore.delete()
     token = nil
     state = .signedOut

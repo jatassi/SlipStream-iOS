@@ -188,4 +188,38 @@ import Testing
     store.clearError()
     #expect(store.lastError == nil)
   }
+
+  @Test func signOutClearsSessionAndDeletesToken() async {
+    let api = FakeAuthAPI(
+      onLogin: { _ in LoginResponse(token: "tok", user: sampleUser(), isAdmin: false) },
+      onProfile: { _ in sampleUser() }
+    )
+    let tokens = FakeTokenStore()
+    let store = makeStore(api: api, tokenStore: tokens)
+    await store.signIn(serverURL: serverURL, username: "jack", pin: "1234")
+    #expect(store.state == .signedIn(sampleUser()))
+
+    store.signOut()
+
+    #expect(store.state == .signedOut)
+    #expect(store.currentToken == nil)
+    #expect(tokens.stored == nil)
+    #expect(tokens.deleteCount == 1)
+  }
+
+  @Test func signOutWhenAlreadySignedOutIsNoOp() {
+    let api = FakeAuthAPI(
+      onLogin: { _ in throw APIClientError.transport("x") },
+      onProfile: { _ in sampleUser() }
+    )
+    let tokens = FakeTokenStore()
+    let store = makeStore(api: api, tokenStore: tokens)
+    #expect(store.state == .signedOut)  // fresh store starts signed out
+
+    store.signOut()
+    store.signOut()
+
+    #expect(store.state == .signedOut)
+    #expect(tokens.deleteCount == 0)  // never touched the keychain — nothing to clear
+  }
 }

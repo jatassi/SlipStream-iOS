@@ -118,12 +118,13 @@ public final class PollingEngine {
 
   /// A poll came back 401: the JWT expired or was rejected. Stop everything and tell the app.
   ///
-  /// The engine owns the 401 for *poll* traffic. `PortalAPIClient` has its own `onUnauthorized`
-  /// hook for non-poll requests; it is unwired today. When F2.4 wires it, scope it to non-poll
-  /// calls so a single expired token doesn't trigger two sign-outs for the same poll cycle.
+  /// The engine owns the 401 for *poll* traffic. `PortalAPIClient` owns it for non-poll requests
+  /// via its own `onUnauthorized` hook; F2.4 funnels both into `SessionExpiry`. A single expired
+  /// token can reach both paths in one poll cycle, which is safe — `SessionExpiry.handleUnauthorized`
+  /// is idempotent (`suspend()` and `AuthStore.signOut()` both no-op when already applied).
   private func handleUnauthorized() {
-    isSuspended = true
-    reevaluate()  // shouldRun is now false for all streams → cancels every driver
+    // Sets isSuspended + cancels every driver via reevaluate (no-op if already suspended).
+    suspend()
     onUnauthorized()
   }
 }
