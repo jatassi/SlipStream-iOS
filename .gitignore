@@ -18,3 +18,7 @@ xcuserdata/
 
 # XcodeBuildMCP local session config (may hold dev creds) — never commit
 .xcodebuildmcp/
+
+# Per-package SPM lockfiles for local packages (the authoritative lockfile is
+# the xcworkspace one: SlipStream.xcodeproj/.../swiftpm/Package.resolved).
+Packages/*/Package.resolved

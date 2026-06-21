@@ -1,3 +1,4 @@
+import DesignSystem
 import SlipStreamKit
 import SwiftUI
 
@@ -10,8 +11,12 @@ struct SlipStreamApp: App {
   )
   @State private var poller: PollingEngine
   @State private var navigation = NavigationModel()
+  @State private var posterSize = PosterSizePreference(store: UserDefaultsPosterSizeStore())
 
   init() {
+    // Install the Nuke poster pipeline (and, from F1.7 Task 5, the Inter
+    // typeface) before any view renders.
+    DesignTheme.bootstrap()
     let initialAuth = AuthStore(
       makeAuthAPI: { url in PortalAPIClient(baseURL: url) },
       tokenStore: KeychainTokenStore(),
@@ -32,6 +37,8 @@ struct SlipStreamApp: App {
         .environment(system)
         .environment(poller)
         .environment(navigation)
+        .environment(posterSize)
+        .preferredColorScheme(.dark)
     }
   }
 }
