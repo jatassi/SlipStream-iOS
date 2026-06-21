@@ -38,8 +38,18 @@ final class FakeLastUsernameStore: LastUsernameStore, @unchecked Sendable {
 struct FakeAuthAPI: AuthAPI {
   var onLogin: @Sendable (LoginRequest) async throws -> LoginResponse
   var onProfile: @Sendable (String) async throws -> PortalUser
+  var onValidateInvitation: @Sendable (String) async throws -> ValidateInvitationResponse = { _ in
+    throw APIClientError.transport("validateInvitation not stubbed")
+  }
+  var onSignup: @Sendable (SignupRequest) async throws -> SignupResponse = { _ in
+    throw APIClientError.transport("signup not stubbed")
+  }
   func login(_ body: LoginRequest) async throws -> LoginResponse { try await onLogin(body) }
   func profile(token: String) async throws -> PortalUser { try await onProfile(token) }
+  func validateInvitation(token: String) async throws -> ValidateInvitationResponse {
+    try await onValidateInvitation(token)
+  }
+  func signup(_ body: SignupRequest) async throws -> SignupResponse { try await onSignup(body) }
 }
 
 func sampleUser(username: String = "jack", moduleTypes: [String] = []) -> PortalUser {

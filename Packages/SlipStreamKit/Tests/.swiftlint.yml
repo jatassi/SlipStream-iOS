@@ -17,3 +17,7 @@ disabled_rules:
   - static_over_final_class
   # Performance rule — meaningless on `== []` test assertions.
   - empty_collection_literal
+  # Test factory helpers commonly return (store, dependency1, dependency2) — 3-tuples are
+  # idiomatic here and not a real defect. Creating a dedicated struct for each factory return
+  # would add noise with no semantic benefit.
+  - large_tuple

@@ -80,11 +80,8 @@ public final class AuthStore {
     do {
       let resp = try await makeAuthAPI(serverURL)
         .login(LoginRequest(username: username, password: pin))
-      try tokenStore.save(resp.token)
-      serverConfig.setBaseURL(serverURL)
-      lastUsernameStore.setLastUsername(username)
-      token = resp.token
-      state = .signedIn(resp.user)
+      try establishSession(
+        serverURL: serverURL, token: resp.token, user: resp.user, username: username)
     } catch let APIClientError.http(status, _, _) where status == 401 {
       lastError = .badCredentials
     } catch let APIClientError.http(status, _, _) {
@@ -96,6 +93,20 @@ public final class AuthStore {
     } catch {
       lastError = .network(String(describing: error))
     }
+  }
+
+  /// Commit a session created out-of-band (e.g. invitation signup, F2.5), applying the same
+  /// side effects as a successful sign-in: persist the JWT + server URL + remembered username
+  /// and flip to `.signedIn`. `signIn` routes through this too, so both paths are identical.
+  /// Throws if the keychain save fails; the caller maps it to a user-facing error.
+  public func establishSession(
+    serverURL: URL, token newToken: String, user: PortalUser, username: String
+  ) throws {
+    try tokenStore.save(newToken)
+    serverConfig.setBaseURL(serverURL)
+    lastUsernameStore.setLastUsername(username)
+    token = newToken
+    state = .signedIn(user)
   }
 
   /// Clear the session and return to PIN entry. Idempotent: a no-op when already signed out,

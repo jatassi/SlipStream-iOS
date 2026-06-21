@@ -7,6 +7,7 @@ struct SlipStreamApp: App {
   @State private var auth: AuthStore
   @State private var system: SystemStore
   @State private var poller: PollingEngine
+  @State private var signup: InvitationSignupStore
   @State private var navigation = NavigationModel()
   @State private var posterSize = PosterSizePreference(store: UserDefaultsPosterSizeStore())
 
@@ -47,9 +48,16 @@ struct SlipStreamApp: App {
     expiry.auth = initialAuth
     expiry.poller = initialPoller
 
+    let initialSignup = InvitationSignupStore(
+      makeAuthAPI: { url in PortalAPIClient(baseURL: url, onUnauthorized: onUnauthorized) },
+      serverConfig: UserDefaultsServerConfigStore(),
+      auth: initialAuth
+    )
+
     _auth = State(initialValue: initialAuth)
     _system = State(initialValue: initialSystem)
     _poller = State(initialValue: initialPoller)
+    _signup = State(initialValue: initialSignup)
   }
 
   var body: some Scene {
@@ -60,6 +68,7 @@ struct SlipStreamApp: App {
         .environment(poller)
         .environment(navigation)
         .environment(posterSize)
+        .environment(signup)
         .preferredColorScheme(.dark)
     }
   }

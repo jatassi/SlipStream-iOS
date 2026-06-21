@@ -33,12 +33,20 @@ public final class PortalAPIClient: Sendable {
     method: HTTPMethod,
     base: APIBase,
     token: String?,
+    query: [URLQueryItem]?,
     body: Data?
   ) async throws -> Data {
-    let url =
+    var url =
       baseURL
       .appendingPathComponent(base.pathPrefix)
       .appendingPathComponent(path)
+    if let query, !query.isEmpty {
+      var components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+      components?.queryItems = query
+      if let urlWithQuery = components?.url {
+        url = urlWithQuery
+      }
+    }
     var request = URLRequest(url: url)
     request.httpMethod = method.rawValue
     request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -87,9 +95,11 @@ public final class PortalAPIClient: Sendable {
     method: HTTPMethod = .get,
     base: APIBase = .portal,
     token: String? = nil,
+    query: [URLQueryItem]? = nil,
     body: Data? = nil
   ) async throws -> T {
-    let data = try await perform(path, method: method, base: base, token: token, body: body)
+    let data = try await perform(
+      path, method: method, base: base, token: token, query: query, body: body)
     do {
       return try JSONDecoder().decode(T.self, from: data)
     } catch {
@@ -106,7 +116,8 @@ public final class PortalAPIClient: Sendable {
     token: String? = nil,
     body: Data? = nil
   ) async throws {
-    _ = try await perform(path, method: method, base: base, token: token, body: body)
+    _ = try await perform(
+      path, method: method, base: base, token: token, query: nil, body: body)
   }
 }
 
@@ -118,6 +129,21 @@ extension PortalAPIClient: AuthAPI {
 
   public func profile(token: String) async throws -> PortalUser {
     try await send("auth/profile", method: .get, base: .portal, token: token)
+  }
+
+  public func validateInvitation(token: String) async throws -> ValidateInvitationResponse {
+    try await send(
+      "auth/validate-invitation",
+      method: .get,
+      base: .portal,
+      token: nil,
+      query: [URLQueryItem(name: "token", value: token)]
+    )
+  }
+
+  public func signup(_ body: SignupRequest) async throws -> SignupResponse {
+    let encoded = try JSONEncoder().encode(body)
+    return try await send("auth/signup", method: .post, base: .portal, token: nil, body: encoded)
   }
 }
 

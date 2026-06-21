@@ -135,3 +135,7 @@ identifier_name:
   min_length:
     warning: 2
   excluded: [id, db, vm, to, ok, x, y, i, j]
+
+function_parameter_count:
+  warning: 6
+  error: 8

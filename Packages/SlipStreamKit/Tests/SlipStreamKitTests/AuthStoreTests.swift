@@ -222,4 +222,25 @@ import Testing
     #expect(store.state == .signedOut)
     #expect(tokens.deleteCount == 0)  // never touched the keychain — nothing to clear
   }
+
+  @Test func establishSessionStoresTokenConfigUsernameAndSignsIn() throws {
+    let api = FakeAuthAPI(
+      onLogin: { _ in throw APIClientError.transport("x") },
+      onProfile: { _ in sampleUser() }
+    )
+    let tokens = FakeTokenStore()
+    let config = FakeServerConfigStore()
+    let remembered = FakeLastUsernameStore()
+    let store = makeStore(api: api, tokenStore: tokens, config: config, lastUsername: remembered)
+
+    try store.establishSession(
+      serverURL: serverURL, token: "newtok",
+      user: sampleUser(username: "newbie"), username: "newbie")
+
+    #expect(store.state == .signedIn(sampleUser(username: "newbie")))
+    #expect(store.currentToken == "newtok")
+    #expect(tokens.stored == "newtok")
+    #expect(config.baseURL == serverURL)
+    #expect(remembered.lastUsername == "newbie")
+  }
 }

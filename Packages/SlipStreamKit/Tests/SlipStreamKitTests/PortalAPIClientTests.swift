@@ -170,4 +170,55 @@ import Testing
       }
     }
   }
+
+  @Test func validateInvitationHitsPathWithEncodedTokenQuery() async throws {
+    let token = "AbC-_123=="  // base64url-style: url-safe chars + padding
+    StubURLProtocol.handler = { request in
+      #expect(request.url?.path == "/api/v1/requests/auth/validate-invitation")
+      #expect(request.httpMethod == "GET")
+      #expect(request.value(forHTTPHeaderField: "Authorization") == nil)
+      let items = URLComponents(url: request.url!, resolvingAgainstBaseURL: false)?.queryItems
+      #expect(items?.first(where: { $0.name == "token" })?.value == token)
+      let body = #"{"valid":true,"username":"newbie","expiresAt":"2026-06-27T10:30:00Z"}"#
+      let resp = HTTPURLResponse(
+        url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
+      return (resp, Data(body.utf8))
+    }
+    let resp = try await client().validateInvitation(token: token)
+    #expect(resp.valid == true)
+    #expect(resp.username == "newbie")
+  }
+
+  @Test func validateInvitationMaps410ToHttpError() async throws {
+    StubURLProtocol.handler = { request in
+      let resp = HTTPURLResponse(
+        url: request.url!, statusCode: 410, httpVersion: nil, headerFields: nil)!
+      return (resp, Data(#"{"error":"invitation has expired"}"#.utf8))
+    }
+    await #expect(
+      throws: APIClientError.http(status: 410, message: nil, error: "invitation has expired")
+    ) {
+      _ = try await client().validateInvitation(token: "expired")
+    }
+  }
+
+  @Test func signupPostsToSignupPathAndDecodes() async throws {
+    StubURLProtocol.handler = { request in
+      #expect(request.url?.path == "/api/v1/requests/auth/signup")
+      #expect(request.httpMethod == "POST")
+      #expect(request.value(forHTTPHeaderField: "Authorization") == nil)
+      let body = """
+        {"token":"session-jwt",
+         "user":{"id":7,"username":"newbie","moduleSettings":[],
+                 "autoApprove":false,"enabled":true,"isAdmin":false,
+                 "createdAt":"t","updatedAt":"t"}}
+        """
+      let resp = HTTPURLResponse(
+        url: request.url!, statusCode: 201, httpVersion: nil, headerFields: nil)!
+      return (resp, Data(body.utf8))
+    }
+    let resp = try await client().signup(SignupRequest(token: "invite-tok", password: "1234"))
+    #expect(resp.token == "session-jwt")
+    #expect(resp.user.username == "newbie")
+  }
 }

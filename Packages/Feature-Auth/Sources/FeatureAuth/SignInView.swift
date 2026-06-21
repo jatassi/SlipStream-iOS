@@ -14,6 +14,8 @@ public struct SignInView: View {
   @State private var hasPopulated = false
   @FocusState private var usernameFocused: Bool
   @FocusState private var pinFocused: Bool
+  @Environment(InvitationSignupStore.self) private var signupStore
+  @State private var showingSignup = false
 
   public init() {}
 
@@ -32,8 +34,17 @@ public struct SignInView: View {
         }
         .disabled(!canSubmit || isSubmitting)
       }
+      Section {
+        Button("Have an invitation? Sign up") {
+          signupStore.reset()
+          showingSignup = true
+        }
+      }
     }
     .onAppear(perform: populateIfNeeded)
+    .sheet(isPresented: $showingSignup) {
+      InvitationSignupView()
+    }
   }
 
   @ViewBuilder private var serverSection: some View {
