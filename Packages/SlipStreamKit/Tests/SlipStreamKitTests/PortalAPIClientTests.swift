@@ -221,4 +221,42 @@ import Testing
     #expect(resp.token == "session-jwt")
     #expect(resp.user.username == "newbie")
   }
+
+  @Test func libraryMoviesHitsPortalPathWithBearerAndDecodes() async throws {
+    StubURLProtocol.handler = { request in
+      #expect(request.url?.path == "/api/v1/requests/library/movies")
+      #expect(request.httpMethod == "GET")
+      #expect(request.value(forHTTPHeaderField: "Authorization") == "Bearer tok")
+      let body = """
+        [{"id":1,"tmdbId":603,"title":"The Matrix","year":1999,
+          "overview":"o","posterUrl":"https://x/p.jpg","backdropUrl":null}]
+        """
+      let resp = HTTPURLResponse(
+        url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
+      return (resp, Data(body.utf8))
+    }
+    let movies = try await client().libraryMovies(token: "tok")
+    #expect(movies.count == 1)
+    #expect(movies.first?.title == "The Matrix")
+    #expect(movies.first?.tmdbId == 603)
+  }
+
+  @Test func librarySeriesHitsPortalPathWithBearerAndDecodes() async throws {
+    StubURLProtocol.handler = { request in
+      #expect(request.url?.path == "/api/v1/requests/library/series")
+      #expect(request.httpMethod == "GET")
+      #expect(request.value(forHTTPHeaderField: "Authorization") == "Bearer tok")
+      let body = """
+        [{"id":2,"tmdbId":1399,"tvdbId":121361,"title":"Game of Thrones","year":2011,
+          "overview":"o","posterUrl":null,"backdropUrl":null,"network":"HBO"}]
+        """
+      let resp = HTTPURLResponse(
+        url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
+      return (resp, Data(body.utf8))
+    }
+    let series = try await client().librarySeries(token: "tok")
+    #expect(series.count == 1)
+    #expect(series.first?.title == "Game of Thrones")
+    #expect(series.first?.tvdbId == 121361)
+  }
 }

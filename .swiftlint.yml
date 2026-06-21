@@ -97,7 +97,9 @@ opt_in_rules:
   - joined_default_parameter
   - legacy_multiple
   - legacy_objc_type
-  - pattern_matching_keywords
+  # pattern_matching_keywords omitted: conflicts with swift-format's UseLetInEveryBoundCaseVariable
+  # (swift-format prefers `case .foo(let x, let y)`; SwiftLint wants `case let .foo(x, y)`).
+  # swift-format owns all formatting per CLAUDE.md — SwiftLint is semantic-only.
   - prefer_key_path
   - prefer_zero_over_explicit_init
   - redundant_nil_coalescing

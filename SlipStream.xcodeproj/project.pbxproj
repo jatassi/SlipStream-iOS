@@ -11,6 +11,7 @@
 		1A1A1A1A1A1A1A1A1A1A0011 /* FeatureAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 1A1A1A1A1A1A1A1A1A1A0013 /* FeatureAuth */; };
 		1A1A1A1A1A1A1A1A1A1A0021 /* FeatureShell in Frameworks */ = {isa = PBXBuildFile; productRef = 1A1A1A1A1A1A1A1A1A1A0023 /* FeatureShell */; };
 		1A1A1A1A1A1A1A1A1A1A0031 /* DesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 1A1A1A1A1A1A1A1A1A1A0033 /* DesignSystem */; };
+		1A1A1A1A1A1A1A1A1A1A0041 /* FeatureLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = 1A1A1A1A1A1A1A1A1A1A0043 /* FeatureLibrary */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,6 +34,7 @@
 				1A1A1A1A1A1A1A1A1A1A0011 /* FeatureAuth in Frameworks */,
 				1A1A1A1A1A1A1A1A1A1A0021 /* FeatureShell in Frameworks */,
 				1A1A1A1A1A1A1A1A1A1A0031 /* DesignSystem in Frameworks */,
+				1A1A1A1A1A1A1A1A1A1A0041 /* FeatureLibrary in Frameworks */,
 			);
 		};
 /* End PBXFrameworksBuildPhase section */
@@ -76,6 +78,7 @@
 				1A1A1A1A1A1A1A1A1A1A0013 /* FeatureAuth */,
 				1A1A1A1A1A1A1A1A1A1A0023 /* FeatureShell */,
 				1A1A1A1A1A1A1A1A1A1A0033 /* DesignSystem */,
+				1A1A1A1A1A1A1A1A1A1A0043 /* FeatureLibrary */,
 			);
 			productName = MyApp;
 			productReference = 000000000000000000000120 /* SlipStream.app */;
@@ -110,6 +113,7 @@
 				1A1A1A1A1A1A1A1A1A1A0012 /* XCLocalSwiftPackageReference "Packages/Feature-Auth" */,
 				1A1A1A1A1A1A1A1A1A1A0022 /* XCLocalSwiftPackageReference "Packages/Feature-Shell" */,
 				1A1A1A1A1A1A1A1A1A1A0032 /* XCLocalSwiftPackageReference "Packages/DesignSystem" */,
+				1A1A1A1A1A1A1A1A1A1A0042 /* XCLocalSwiftPackageReference "Packages/Feature-Library" */,
 			);
 			preferredProjectObjectVersion = 90;
 			productRefGroup = 000000000000000000000020 /* Products */;
@@ -387,6 +391,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/DesignSystem;
 		};
+		1A1A1A1A1A1A1A1A1A1A0042 /* XCLocalSwiftPackageReference "Packages/Feature-Library" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/Feature-Library;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -405,6 +413,10 @@
 		1A1A1A1A1A1A1A1A1A1A0033 /* DesignSystem */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = DesignSystem;
+		};
+		1A1A1A1A1A1A1A1A1A1A0043 /* FeatureLibrary */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = FeatureLibrary;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -1,15 +1,23 @@
 import Foundation
 
-/// Mirrors `SlotInfo` in web/src/types/portal.ts.
+/// Mirrors the portal library/search `existingSlots` item.
+/// NOTE: the vendored `portal.ts` is STALE for this type (`{id,name,quality}`); the live
+/// server emits `{slotId, slotName, hasFile, qualityId?}` — see
+/// `internal/portal/requests/library_check.go`. The wire format is authoritative (TS never
+/// reads these fields at runtime, so its drift is invisible there). `qualityId` is optional
+/// (Go pointer + `omitempty`).
 public struct SlotInfo: Codable, Equatable, Sendable, Identifiable {
-  public let id: Int
-  public let name: String
-  public let quality: String
+  public let slotId: Int
+  public let slotName: String
+  public let hasFile: Bool
+  public let qualityId: Int?
+  public var id: Int { slotId }
 
-  public init(id: Int, name: String, quality: String) {
-    self.id = id
-    self.name = name
-    self.quality = quality
+  public init(slotId: Int, slotName: String, hasFile: Bool, qualityId: Int? = nil) {
+    self.slotId = slotId
+    self.slotName = slotName
+    self.hasFile = hasFile
+    self.qualityId = qualityId
   }
 }
 
@@ -77,6 +85,29 @@ public struct AvailabilityInfo: Codable, Equatable, Sendable {
     self.mediaId = mediaId
     self.addedAt = addedAt
     self.seasonAvailability = seasonAvailability
+  }
+
+  private enum CodingKeys: String, CodingKey {
+    case inLibrary, existingSlots, canRequest, existingRequestId, existingRequestUserId,
+      existingRequestStatus, existingRequestIsWatching, mediaId, addedAt, seasonAvailability
+  }
+
+  public init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    inLibrary = try container.decode(Bool.self, forKey: .inLibrary)
+    // The server omits `existingSlots` when empty (Go `omitempty`); default to [].
+    existingSlots = try container.decodeIfPresent([SlotInfo].self, forKey: .existingSlots) ?? []
+    canRequest = try container.decode(Bool.self, forKey: .canRequest)
+    existingRequestId = try container.decodeIfPresent(Int.self, forKey: .existingRequestId)
+    existingRequestUserId = try container.decodeIfPresent(Int.self, forKey: .existingRequestUserId)
+    existingRequestStatus = try container.decodeIfPresent(
+      RequestStatus.self, forKey: .existingRequestStatus)
+    existingRequestIsWatching = try container.decodeIfPresent(
+      Bool.self, forKey: .existingRequestIsWatching)
+    mediaId = try container.decodeIfPresent(Int.self, forKey: .mediaId)
+    addedAt = try container.decodeIfPresent(String.self, forKey: .addedAt)
+    seasonAvailability = try container.decodeIfPresent(
+      [SeasonAvailabilityInfo].self, forKey: .seasonAvailability)
   }
 }
 

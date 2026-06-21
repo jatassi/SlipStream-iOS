@@ -11,7 +11,7 @@ import Testing
         "overview": "A hacker learns the truth.", "posterUrl": "p.jpg", "backdropUrl": null,
         "availability": {
           "inLibrary": true,
-          "existingSlots": [ { "id": 1, "name": "4K", "quality": "2160p" } ],
+          "existingSlots": [ { "slotId": 1, "slotName": "4K", "hasFile": true, "qualityId": 2 } ],
           "canRequest": false,
           "existingRequestId": 5, "existingRequestUserId": 7,
           "existingRequestStatus": "available", "existingRequestIsWatching": false,
@@ -23,7 +23,10 @@ import Testing
     #expect(movie.tmdbId == 603)
     #expect(movie.backdropUrl == nil)
     #expect(movie.availability?.inLibrary == true)
-    #expect(movie.availability?.existingSlots.first?.quality == "2160p")
+    #expect(movie.availability?.existingSlots.first?.slotName == "4K")
+    #expect(movie.availability?.existingSlots.first?.hasFile == true)
+    #expect(movie.availability?.existingSlots.first?.slotId == 1)
+    #expect(movie.availability?.existingSlots.first?.qualityId == 2)
     #expect(movie.availability?.existingRequestStatus == .available)
     #expect(movie.availability?.seasonAvailability == nil)
   }
@@ -81,5 +84,45 @@ import Testing
     #expect(info.available == true)
     #expect(info.airedEpisodesWithFiles == 9)
     #expect(info.monitored == false)
+  }
+
+  // MARK: - existingSlots omission tolerance (F3.1 library bug)
+
+  @Test func decodesMovieWithAvailabilityMissingExistingSlots() throws {
+    // The real library endpoint omits existingSlots when empty (Go omitempty).
+    // Decoding must succeed and default existingSlots to [].
+    let json = """
+      {
+        "id": 438631, "tmdbId": 438631, "title": "Dune", "year": 2021,
+        "overview": "Paul Atreides...",
+        "posterUrl": "/api/v1/metadata/artwork/movie/438631/poster",
+        "availability": { "inLibrary": true, "canRequest": false, "mediaId": 3, "addedAt": "2026-06-21T04:49:56Z" }
+      }
+      """
+    let movie = try JSONDecoder().decode(PortalMovieSearchResult.self, from: Data(json.utf8))
+    #expect(movie.title == "Dune")
+    #expect(movie.availability?.inLibrary == true)
+    #expect(movie.availability?.existingSlots == [])
+    #expect(movie.availability?.mediaId == 3)
+  }
+
+  @Test func decodesMovieWithAvailabilityIncludingNonEmptyExistingSlots() throws {
+    // When existingSlots IS present, it must decode normally (no regression).
+    // Also verifies qualityId is nil when omitted (Go omitempty on pointer field).
+    let json = """
+      {
+        "id": 1, "tmdbId": 1, "title": "Test Movie",
+        "availability": {
+          "inLibrary": true, "canRequest": false,
+          "existingSlots": [{"slotId": 1, "slotName": "HD", "hasFile": false}]
+        }
+      }
+      """
+    let movie = try JSONDecoder().decode(PortalMovieSearchResult.self, from: Data(json.utf8))
+    #expect(movie.availability?.existingSlots.count == 1)
+    #expect(movie.availability?.existingSlots.first?.slotName == "HD")
+    #expect(movie.availability?.existingSlots.first?.hasFile == false)
+    #expect(movie.availability?.existingSlots.first?.slotId == 1)
+    #expect(movie.availability?.existingSlots.first?.qualityId == nil)
   }
 }

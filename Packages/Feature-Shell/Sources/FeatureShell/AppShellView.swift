@@ -6,10 +6,13 @@ import SwiftUI
 /// — one layer for all three platforms. Each tab hosts its own `NavigationStack`
 /// (so features can push detail screens) and reserves the global downloads-strip
 /// slot just below the navigation bar.
-public struct AppShellView: View {
+public struct AppShellView<LibraryContent: View>: View {
   @Environment(NavigationModel.self) private var nav
+  private let libraryContent: () -> LibraryContent
 
-  public init() {}
+  public init(@ViewBuilder libraryContent: @escaping () -> LibraryContent) {
+    self.libraryContent = libraryContent
+  }
 
   public var body: some View {
     @Bindable var nav = nav
@@ -21,7 +24,7 @@ public struct AppShellView: View {
         tab(.search) { SearchPlaceholderView() }
       }
       Tab(AppTab.library.title, systemImage: AppTab.library.systemImage, value: AppTab.library) {
-        tab(.library) { LibraryPlaceholderView() }
+        tab(.library) { libraryContent() }
       }
       Tab(AppTab.settings.title, systemImage: AppTab.settings.systemImage, value: AppTab.settings) {
         tab(.settings) { SettingsPlaceholderView() }

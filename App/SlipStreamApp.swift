@@ -8,6 +8,7 @@ struct SlipStreamApp: App {
   @State private var system: SystemStore
   @State private var poller: PollingEngine
   @State private var signup: InvitationSignupStore
+  @State private var library: LibraryStore
   @State private var navigation = NavigationModel()
   @State private var posterSize = PosterSizePreference(store: UserDefaultsPosterSizeStore())
 
@@ -41,6 +42,12 @@ struct SlipStreamApp: App {
       makeSystemAPI: { url in PortalAPIClient(baseURL: url, onUnauthorized: onUnauthorized) },
       serverConfig: UserDefaultsServerConfigStore()
     )
+    let initialLibrary = LibraryStore(
+      makeMediaAPI: { url in PortalAPIClient(baseURL: url, onUnauthorized: onUnauthorized) },
+      serverConfig: UserDefaultsServerConfigStore(),
+      tokenProvider: { initialAuth.currentToken },
+      tabStore: UserDefaultsLibraryTabStore()
+    )
     // A 401 from a poll also routes through the same handler (the engine additionally self-suspends
     // and stops its drivers; suspend() is then a guarded no-op here).
     let initialPoller = PollingEngine(onUnauthorized: { expiry.handleUnauthorized() })
@@ -58,6 +65,7 @@ struct SlipStreamApp: App {
     _system = State(initialValue: initialSystem)
     _poller = State(initialValue: initialPoller)
     _signup = State(initialValue: initialSignup)
+    _library = State(initialValue: initialLibrary)
   }
 
   var body: some Scene {
@@ -69,6 +77,7 @@ struct SlipStreamApp: App {
         .environment(navigation)
         .environment(posterSize)
         .environment(signup)
+        .environment(library)
         .preferredColorScheme(.dark)
     }
   }

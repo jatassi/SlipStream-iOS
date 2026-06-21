@@ -7,7 +7,7 @@ How a user finds media: browse what's already in the library, search the catalog
 
 ## Features
 
-- [ ] [Library poster grid (Movies/Series tabs)](library-poster-grid.md) — browse in-library titles
+- [x] [Library poster grid (Movies/Series tabs)](library-poster-grid.md) — browse in-library titles
 - [ ] [Title search](title-search.md) — search movies & series; In-Library vs Request grouping
 - [ ] [Rich media-detail screen](media-detail-screen.md) — extended metadata, cast, ratings, trailer *(second API base path)*
 - [ ] [Per-card request state machine](request-state-card.md) — In Library / Available / Searching / Approved / Requested / View Request + inline progress

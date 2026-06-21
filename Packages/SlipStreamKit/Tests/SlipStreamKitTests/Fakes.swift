@@ -72,3 +72,41 @@ func sampleStatus(
 ) -> SystemStatus {
   SystemStatus(portalEnabled: portalEnabled, enabledModules: enabledModules)
 }
+
+struct FakeMediaAPI: MediaAPI {
+  var onMovies: @Sendable (String) async throws -> [PortalMovieSearchResult] = { _ in [] }
+  var onSeries: @Sendable (String) async throws -> [PortalSeriesSearchResult] = { _ in [] }
+  func libraryMovies(token: String) async throws -> [PortalMovieSearchResult] {
+    try await onMovies(token)
+  }
+  func librarySeries(token: String) async throws -> [PortalSeriesSearchResult] {
+    try await onSeries(token)
+  }
+}
+
+final class FakeLibraryTabStore: LibraryTabStore, @unchecked Sendable {
+  private var tab: LibraryTab
+  private(set) var setCount = 0
+  init(tab: LibraryTab = .movies) { self.tab = tab }
+  var selectedTab: LibraryTab { tab }
+  func setSelectedTab(_ tab: LibraryTab) {
+    self.tab = tab
+    setCount += 1
+  }
+}
+
+/// Thread-safe call counter for asserting fetch counts from `@Sendable` fake closures.
+final class CallCounter: @unchecked Sendable {
+  private let lock = NSLock()
+  private var value = 0
+  var count: Int { lock.withLock { value } }
+  func increment() { lock.withLock { value += 1 } }
+}
+
+func sampleMovie(id: Int = 1, title: String = "The Matrix") -> PortalMovieSearchResult {
+  PortalMovieSearchResult(id: id, tmdbId: 603, title: title, year: 1999)
+}
+
+func sampleSeries(id: Int = 2, title: String = "Game of Thrones") -> PortalSeriesSearchResult {
+  PortalSeriesSearchResult(id: id, tmdbId: 1399, title: title, tvdbId: 121_361, year: 2011)
+}

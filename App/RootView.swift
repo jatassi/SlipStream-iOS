@@ -1,5 +1,6 @@
 import DesignSystem
 import FeatureAuth
+import FeatureLibrary
 import FeatureShell
 import SlipStreamKit
 import SwiftUI
@@ -16,14 +17,16 @@ struct RootView: View {
 
   var body: some View {
     AuthGateView {
-      AppShellView()
-        // Re-enable polling on a fresh sign-in: a 401 auto-logout suspends the engine
-        // (via SessionExpiry) and only resume() clears it. (F2.4)
-        .onAppear { poller.resume() }
-        // Refresh system discovery (enabled modules + portalEnabled) on the
-        // signed-in path. F1.4 wiring; previously triggered by the removed
-        // SignedInPlaceholderView. Downstream features (F2.6, F3.x) read this.
-        .task { await system.refresh() }
+      AppShellView {
+        LibraryView()
+      }
+      // Re-enable polling on a fresh sign-in: a 401 auto-logout suspends the engine
+      // (via SessionExpiry) and only resume() clears it. (F2.4)
+      .onAppear { poller.resume() }
+      // Refresh system discovery (enabled modules + portalEnabled) on the
+      // signed-in path. F1.4 wiring; previously triggered by the removed
+      // SignedInPlaceholderView. Downstream features (F2.6, F3.x) read this.
+      .task { await system.refresh() }
     }
     .onChange(of: scenePhase, initial: true) { _, phase in
       poller.setActivity(activity(for: phase))

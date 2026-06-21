@@ -152,3 +152,13 @@ extension PortalAPIClient: SystemAPI {
     try await send("status", base: .status)
   }
 }
+
+extension PortalAPIClient: MediaAPI {
+  public func libraryMovies(token: String) async throws -> [PortalMovieSearchResult] {
+    try await send("library/movies", base: .portal, token: token)
+  }
+
+  public func librarySeries(token: String) async throws -> [PortalSeriesSearchResult] {
+    try await send("library/series", base: .portal, token: token)
+  }
+}
