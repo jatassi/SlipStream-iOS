@@ -8,12 +8,13 @@ let package = Package(
     .library(name: "FeatureAuth", targets: ["FeatureAuth"])
   ],
   dependencies: [
-    .package(path: "../SlipStreamKit")
+    .package(path: "../SlipStreamKit"),
+    .package(path: "../DesignSystem"),
   ],
   targets: [
     .target(
       name: "FeatureAuth",
-      dependencies: ["SlipStreamKit"]
+      dependencies: ["SlipStreamKit", "DesignSystem"]
     )
   ]
 )

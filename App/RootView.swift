@@ -27,6 +27,18 @@ struct RootView: View {
     }
     .onChange(of: scenePhase, initial: true) { _, phase in
       poller.setActivity(activity(for: phase))
+      // F2.6: refresh portal/module status on launch (initial: true fires once at
+      // startup) and on every foreground — this drives the portal-disabled gate and
+      // module discovery, and reacts to an admin toggle on return. It only fetches once
+      // a server URL is persisted (`SystemStore.refresh()` no-ops while
+      // `serverConfig.baseURL` is nil, and the URL is persisted on first successful
+      // sign-in), so the gate applies pre-auth for returning users; a brand-new install
+      // with no URL yet relies on the optimistic default until first sign-in (see spec's
+      // "Known limitation"). The signed-in `.task` refresh above is kept for
+      // fresh-sign-in module discovery (F1.4); the cold-launch overlap is one idempotent GET.
+      if phase == .active {
+        Task { await system.refresh() }
+      }
     }
     // Drop cached poster artwork whenever the session ends — manual sign-out or
     // a 401 auto-logout (F2.4, via SessionExpiry). Shared family device. (F1.7)
