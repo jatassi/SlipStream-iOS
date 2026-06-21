@@ -40,6 +40,10 @@ First time on this machine — or first time on a given physical device — do t
 
 3. **Sign in and smoke-verify.** Tap **Sign In** (pre-fill never auto-submits, so the real login → JWT → Keychain path runs). Done when the app reaches the signed-in screen (e.g. "Signed in as &lt;user&gt;" with profile details). Post-login is currently a profile placeholder — the requests / downloads / inbox feature views aren't built yet, though their endpoints are live (`smoke.sh` covers one).
 
+4. **Test your feature.** Test intended behavior by using XcodeBuildMCP tools. Iterate until all behavior has been positively verified.
+
+5. **Clean up.** Once testing is complete, stop the backend server and shut down all simulators.
+
 ## Reference
 
 - **Credentials & the env seam** — `SLIPSTREAM_BASE_URL`, `SLIPSTREAM_DEV_USERNAME`, `SLIPSTREAM_DEV_PIN`, parsed by `DevLaunchConfig` in `SlipStreamKit/Dev/`. Persisted as the XcodeBuildMCP default launch env in `.xcodebuildmcp/config.yaml` (gitignored), so `launch_app_sim` auto-pre-fills the form. Same seam future automated integration tests use: set them and drive `AuthStore.signIn` directly, no UI. An invalid `SLIPSTREAM_BASE_URL` is ignored and the form falls back to the persisted URL.
